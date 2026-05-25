@@ -1,0 +1,111 @@
+@use 'common/breakpoints' as *;
+
+// ==========================================================================
+// Résumé archive — credits grouped into sections.
+//
+// Mirrors resume.htm: a credentials block under the heading, then each
+// section (Broadway, Off-Broadway, …) heads a three-column table of
+// production / role / venue. The original packed three ~125px columns into
+// the left panel; we keep that, dropping to a stacked layout on phones
+// where three columns can't breathe. Renders inside the dark content panel.
+// ==========================================================================
+
+.resume__credentials {
+    margin: 0;
+    margin-block-start: var(--wp--preset--spacing--20);
+    padding: 0;
+    list-style: none;
+    font-size: var(--wp--preset--font-size--small);
+    line-height: 1.5;
+}
+
+.resume__section {
+    margin-block-start: var(--wp--preset--spacing--40);
+}
+
+.resume__credits {
+    width: 100%;
+    margin-block-start: var(--wp--preset--spacing--20);
+    border-collapse: separate;
+    border-spacing: 0 var(--wp--preset--spacing--20);
+    font-size: var(--wp--preset--font-size--small);
+    line-height: 1.4;
+
+    th,
+    td {
+        vertical-align: top;
+        text-align: start;
+        font-weight: 400;
+        padding-inline-end: 0.75rem;
+        color: var(--wp--preset--color--white);
+    }
+
+    td:last-child {
+        padding-inline-end: 0;
+    }
+}
+
+// Production column carries the most weight: a touch wider, never wrapping
+// the role/venue columns to nothing.
+.resume__production {
+    width: 42%;
+}
+
+.resume__role,
+.resume__venue {
+    width: 29%;
+}
+
+.resume__note {
+    display: block;
+    font-style: italic;
+    color: var(--wp--preset--color--rule-gray);
+}
+
+.resume__footer-note {
+    margin-block-start: var(--wp--preset--spacing--40);
+    font-size: var(--wp--preset--font-size--small);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.resume__detail {
+    margin-block-start: var(--wp--preset--spacing--30);
+    font-size: var(--wp--preset--font-size--small);
+
+    p {
+        margin-block-start: var(--wp--preset--spacing--10);
+        text-align: start;
+    }
+}
+
+.resume__downloads {
+    margin-block-start: var(--wp--preset--spacing--40);
+    display: flex;
+    gap: var(--wp--preset--spacing--40);
+    font-size: var(--wp--preset--font-size--small);
+}
+
+// Phones: three narrow columns become unreadable — stack each credit.
+@include media-down(sm) {
+    .resume__credits,
+    .resume__credits tbody,
+    .resume__credit,
+    .resume__credits th,
+    .resume__credits td {
+        display: block;
+        width: auto;
+    }
+
+    .resume__credit {
+        margin-block-start: var(--wp--preset--spacing--20);
+    }
+
+    .resume__production {
+        font-weight: 700;
+    }
+
+    .resume__role::before {
+        content: '\2014\00a0'; // em dash + nbsp
+    }
+}

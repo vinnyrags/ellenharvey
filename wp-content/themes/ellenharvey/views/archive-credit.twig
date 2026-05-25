@@ -1,0 +1,77 @@
+{% extends "base.twig" %}
+
+{# Résumé archive — credits grouped into sections, each section a three-column
+   table of production / role / venue, mirroring the original resume.htm.
+   Header credentials and the training/skills/awards footer come from the
+   Résumé Details options page. Renders inside the dark content panel. #}
+
+{% block content %}
+    <div class="resume">
+        <h1>{{ title }}</h1>
+
+        {% set d = details %}
+        {% if d.unions or d.eyes or d.hair or d.vocal_range %}
+            <ul class="resume__credentials">
+                {% if d.unions %}<li>{{ d.unions }}</li>{% endif %}
+                {% if d.eyes %}<li>Eyes: {{ d.eyes }}</li>{% endif %}
+                {% if d.hair %}<li>Hair: {{ d.hair }}</li>{% endif %}
+                {% if d.vocal_range %}<li>Vocal Range: {{ d.vocal_range }}</li>{% endif %}
+            </ul>
+        {% endif %}
+
+        {% for group in groups %}
+            <section class="resume__section">
+                <h2 class="resume__section-title">{{ group.section.title }}</h2>
+
+                <table class="resume__credits">
+                    {% for credit in group.credits %}
+                        <tr class="resume__credit">
+                            <th class="resume__production" scope="row">
+                                {{ credit.title }}
+                                {% if credit.note %}
+                                    <span class="resume__note">({{ credit.note }})</span>
+                                {% endif %}
+                            </th>
+                            <td class="resume__role">{{ credit.role }}</td>
+                            <td class="resume__venue">{{ credit.venue }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </section>
+        {% else %}
+            <p>Résumé coming soon.</p>
+        {% endfor %}
+
+        {% if d.footer_note %}
+            <p class="resume__footer-note">{{ d.footer_note }}</p>
+        {% endif %}
+
+        {% if d.training %}
+            <section class="resume__detail">
+                <h2>Training</h2>
+                {{ d.training }}
+            </section>
+        {% endif %}
+
+        {% if d.skills %}
+            <section class="resume__detail">
+                <h2>Skills</h2>
+                {{ d.skills }}
+            </section>
+        {% endif %}
+
+        {% if d.awards %}
+            <section class="resume__detail">
+                <h2>Awards</h2>
+                {{ d.awards }}
+            </section>
+        {% endif %}
+
+        {% if d.pdf or d.headshots %}
+            <p class="resume__downloads">
+                {% if d.pdf %}<a href="{{ d.pdf.url }}">Download PDF</a>{% endif %}
+                {% if d.headshots %}<a href="{{ d.headshots.url }}">Download Headshots</a>{% endif %}
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}

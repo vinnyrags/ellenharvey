@@ -1,0 +1,51 @@
+{
+    "key": "group_credit_fields",
+    "title": "Credit",
+    "fields": [
+        {
+            "key": "field_credit_role",
+            "label": "Role",
+            "name": "role",
+            "type": "text",
+            "instructions": "The character or role, e.g. \"Miss Erikson\" or \"Standby\".",
+            "required": 0,
+            "placeholder": "Miss Erikson"
+        },
+        {
+            "key": "field_credit_venue",
+            "label": "Venue / Company",
+            "name": "venue",
+            "type": "text",
+            "instructions": "Theatre, tour, network, or studio, e.g. \"St. James Theater\" or \"U.S. National Tour/Disney\".",
+            "required": 0,
+            "placeholder": "St. James Theater"
+        },
+        {
+            "key": "field_credit_note",
+            "label": "Note",
+            "name": "note",
+            "type": "text",
+            "instructions": "Optional parenthetical shown under the production — a director credit or award, e.g. \"dir. Susan Stroman\". Omit the parentheses; the template adds them.",
+            "required": 0,
+            "placeholder": "dir. Susan Stroman"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "credit"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 1
+}

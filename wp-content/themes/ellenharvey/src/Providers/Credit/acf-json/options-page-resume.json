@@ -1,0 +1,8 @@
+{
+    "page_title": "Résumé Details",
+    "menu_title": "Résumé Details",
+    "menu_slug": "resume-details",
+    "parent_slug": "edit.php?post_type=credit",
+    "capability": "edit_posts",
+    "redirect": false
+}

@@ -1,0 +1,32 @@
+{
+  "post_type": "credit",
+  "args": {
+    "labels": {
+      "name": "Credits",
+      "singular_name": "Credit",
+      "add_new": "Add New",
+      "add_new_item": "Add New Credit",
+      "edit_item": "Edit Credit",
+      "new_item": "New Credit",
+      "view_item": "View Credit",
+      "search_items": "Search Credits",
+      "not_found": "No credits found",
+      "not_found_in_trash": "No credits found in Trash",
+      "all_items": "All Credits",
+      "menu_name": "Résumé"
+    },
+    "public": true,
+    "publicly_queryable": true,
+    "has_archive": true,
+    "rewrite": { "slug": "resume", "with_front": false },
+    "exclude_from_search": false,
+    "show_ui": true,
+    "show_in_menu": true,
+    "show_in_nav_menus": false,
+    "show_in_rest": true,
+    "supports": ["title", "page-attributes"],
+    "menu_icon": "dashicons-list-view",
+    "menu_position": 20
+  },
+  "classic_editor": true
+}
