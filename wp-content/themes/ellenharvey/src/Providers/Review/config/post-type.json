@@ -1,0 +1,32 @@
+{
+  "post_type": "review",
+  "args": {
+    "labels": {
+      "name": "Reviews",
+      "singular_name": "Review",
+      "add_new": "Add New",
+      "add_new_item": "Add New Review",
+      "edit_item": "Edit Review",
+      "new_item": "New Review",
+      "view_item": "View Review",
+      "search_items": "Search Reviews",
+      "not_found": "No reviews found",
+      "not_found_in_trash": "No reviews found in Trash",
+      "all_items": "All Reviews",
+      "menu_name": "Reviews"
+    },
+    "public": true,
+    "publicly_queryable": true,
+    "has_archive": true,
+    "rewrite": { "slug": "reviews", "with_front": false },
+    "exclude_from_search": false,
+    "show_ui": true,
+    "show_in_menu": true,
+    "show_in_nav_menus": false,
+    "show_in_rest": true,
+    "supports": ["title", "page-attributes"],
+    "menu_icon": "dashicons-format-quote",
+    "menu_position": 21
+  },
+  "classic_editor": true
+}

@@ -1,0 +1,44 @@
+@use 'common/breakpoints' as *;
+
+// ==========================================================================
+// Reviews archive — press quotes grouped by production.
+//
+// Mirrors reviews.htm: a gold show heading, a run of white pull-quotes with
+// italic source attributions, and a "back to top" link closing each show.
+// Renders inside the standard dark content panel.
+// ==========================================================================
+
+.reviews__show {
+    margin-block-start: var(--wp--preset--spacing--50);
+
+    &:first-of-type {
+        margin-block-start: var(--wp--preset--spacing--40);
+    }
+}
+
+.reviews__quote {
+    margin: 0;
+    margin-block-start: var(--wp--preset--spacing--30);
+}
+
+.reviews__quote-text {
+    margin: 0;
+    text-align: justify;
+
+    &::before { content: '\201C'; }
+    &::after  { content: '\201D'; }
+}
+
+.reviews__quote-source {
+    display: block;
+    margin-block-start: 0.25rem;
+    font-style: italic;
+    color: var(--wp--preset--color--white);
+
+    &::before { content: '\2014\00a0'; } // em dash + nbsp
+}
+
+.reviews__back-to-top {
+    margin-block-start: var(--wp--preset--spacing--30);
+    font-size: var(--wp--preset--font-size--small);
+}

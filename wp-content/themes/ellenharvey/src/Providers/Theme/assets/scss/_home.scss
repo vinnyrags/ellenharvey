@@ -45,53 +45,73 @@ body.home {
     }
 }
 
-// --- Quote slideshow -------------------------------------------------------
+// --- Quote highlights (featured reviews) -----------------------------------
+//
+// A stack of pull-quotes crossfading over the hero. Visibility is driven by
+// home-quotes.js toggling `.is-visible` (handles any number of quotes); CSS
+// owns the fade. Floats into the lower-right over the hero on desktop,
+// echoing the original #flash slideshow position.
 
 .home-quotes {
     position: relative;
     width: 400px;
     max-width: 100%;
-    height: 200px;
+    min-height: 200px;
     margin: var(--wp--preset--spacing--50) auto 0;
 
-    // Desktop: float into the lower-right over the hero, as in the original
-    // (#flash margin-top:350px; margin-left:550px).
     @include media(lg) {
         margin: 0;
         position: absolute;
         top: 360px;
         right: 0;
+        text-align: right;
     }
 }
 
 .home-quotes__slide {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: auto;
+    margin: 0;
     opacity: 0;
-    animation: home-quote-fade 16s linear infinite;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
 
-    &:nth-child(1) { animation-delay: 0s; }
-    &:nth-child(2) { animation-delay: 4s; }
-    &:nth-child(3) { animation-delay: 8s; }
-    &:nth-child(4) { animation-delay: 12s; }
+    &.is-visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
 }
 
-@keyframes home-quote-fade {
-    0%   { opacity: 0; }
-    3%   { opacity: 1; }
-    22%  { opacity: 1; }
-    25%  { opacity: 0; }
-    100% { opacity: 0; }
+.home-quotes__text {
+    margin: 0;
+    font-family: var(--wp--preset--font-family--georgia);
+    font-size: var(--wp--preset--font-size--large);
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--wp--preset--color--white);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+    text-align: inherit;
+
+    &::before { content: '\201C'; }
+    &::after  { content: '\201D'; }
+}
+
+.home-quotes__source {
+    display: block;
+    margin-block-start: var(--wp--preset--spacing--20);
+    font-family: var(--wp--preset--font-family--arial);
+    font-size: var(--wp--preset--font-size--small);
+    font-style: normal;
+    color: var(--wp--preset--color--gold);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+
+    &::before { content: '\2014\00a0'; } // em dash + nbsp
 }
 
 @include reduced-motion {
-    // Respect reduced-motion: show the first quote, hold it.
+    // No crossfade: home-quotes.js leaves the first quote visible; just
+    // disable the transition so it appears immediately.
     .home-quotes__slide {
-        animation: none;
-    }
-    .home-quotes__slide:first-child {
-        opacity: 1;
+        transition: none;
     }
 }

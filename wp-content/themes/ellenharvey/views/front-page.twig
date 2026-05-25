@@ -29,22 +29,20 @@
 
 {% block main %}
     <main id="wp--skip-link--target" class="site-main site-main--home">
-        {# Placeholder slideshow: the four original review-quote slides on a
-           CSS crossfade. Phase 2 swaps these for featured entries pulled from
-           the Review CPT so the quotes stay editable. #}
-        <div class="home-quotes" aria-label="Review highlights">
-            {% set slides = [
-                { src: 'slide-index-1.png', alt: 'Ellen Harvey is consistently one of the best parts of the show — Columbus Live' },
-                { src: 'slide-index-2.png', alt: 'Harvey is a show all by herself — San Francisco Examiner' },
-                { src: 'slide-index-3.png', alt: 'Ellen Harvey lends stellar support, not just in the vocals but in the hilarious characterizations. — Talkin Broadway' },
-                { src: 'slide-index-4.png', alt: 'It starts with a show-stealing performance by Ellen Harvey, a fabulous actress with a voice for miles — Cleveland Plain Dealer' }
-            ] %}
-            {% for slide in slides %}
-                <img class="home-quotes__slide"
-                     src="{{ function('get_theme_file_uri', 'src/Providers/Theme/assets/images/' ~ slide.src) }}"
-                     width="400" height="200"
-                     alt="{{ slide.alt }}" />
-            {% endfor %}
-        </div>
+        {# Featured reviews rotate over the hero on a CSS crossfade — the
+           modern, editable replacement for the original's static quote
+           slides. Each is a review flagged "Feature on homepage". #}
+        {% if featured_reviews|length %}
+            <div class="home-quotes" aria-label="Review highlights">
+                {% for review in featured_reviews %}
+                    <blockquote class="home-quotes__slide">
+                        <p class="home-quotes__text">{{ review.quote }}</p>
+                        {% if review.source %}
+                            <cite class="home-quotes__source">{{ review.source }}</cite>
+                        {% endif %}
+                    </blockquote>
+                {% endfor %}
+            </div>
+        {% endif %}
     </main>
 {% endblock %}
