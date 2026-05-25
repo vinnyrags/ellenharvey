@@ -1,3 +1,12 @@
 @use 'common/breakpoints' as *;
 
-// Theme entry point. Add global styles here, or import provider-scoped partials.
+// Ellen Harvey theme entry point.
+// Faithful rebuild of the original ellenharvey.net look (fixed 1000px,
+// black, dark content panel over a photographic column) with a sensible
+// responsive adaptation for phones/tablets the original never had.
+
+@use 'layout/frame';
+@use 'layout/backgrounds';
+@use 'header';
+@use 'typography';
+@use 'home';

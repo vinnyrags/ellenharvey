@@ -1,0 +1,36 @@
+{% block html_head_container %}
+    {% include 'head.twig' %}
+    {% block head %}{% endblock %}
+    </head>
+{% endblock %}
+
+<body {{ function('body_class') }}>
+    {{ function('wp_body_open') }}
+    <a class="skip-link screen-reader-text" href="#wp--skip-link--target">{{ _e('Skip to content') }}</a>
+
+    {# Two-column frame: dark content panel (left) + photographic column with
+       wordmark + nav (right). front-page overrides this with its own header
+       block for the full-width home treatment. Collapses to a single column
+       on mobile (see _layout.scss). #}
+    <div class="site-layout">
+        {% block header %}
+            {% include 'header.twig' %}
+        {% endblock %}
+
+        <main id="wp--skip-link--target" class="site-main">
+            {% block main %}
+                <div class="site-content">
+                    {% block content %}
+                        {{ post.content }}
+                    {% endblock %}
+                </div>
+            {% endblock %}
+        </main>
+    </div>
+
+    {% block footer %}
+        {% include 'footer.twig' %}
+        {{ function('wp_footer') }}
+    {% endblock %}
+</body>
+</html>

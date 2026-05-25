@@ -1,0 +1,65 @@
+@use 'common/breakpoints' as *;
+
+// ==========================================================================
+// Per-page photographic backgrounds.
+//
+// Each route in the original sets its own full-bleed photo of Ellen on a
+// black field (center-top). We reproduce that, mapped by the body classes
+// WP emits (`.home`, `.post-type-archive-*`) plus the slug class added by
+// ThemeProvider::addPageSlugBodyClass (`.page-news`, etc.).
+//
+// url() paths resolve relative to the COMPILED CSS at dist/css/theme.css —
+// out of dist/css/ and back into the provider's assets/images directory.
+// ==========================================================================
+
+$img: '../../src/Providers/Theme/assets/images';
+
+body {
+    background-color: #000;
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: cover;
+    background-attachment: fixed;
+    // Sensible default until a more specific route rule below matches.
+    background-image: url('#{$img}/back_home.jpg');
+}
+
+// Home
+body.home {
+    background-image: url('#{$img}/back_home.jpg');
+}
+
+// Static pages (slug classes via ThemeProvider::addPageSlugBodyClass)
+body.page-news {
+    background-image: url('#{$img}/back_news.jpg');
+}
+
+body.page-media {
+    background-image: url('#{$img}/back_media.jpg');
+}
+
+body.page-contact {
+    background-image: url('#{$img}/back_contact1.jpg');
+}
+
+// CPT archives
+body.post-type-archive-credit {
+    background-image: url('#{$img}/back_resume2.2.jpg');
+}
+
+body.post-type-archive-review {
+    background-image: url('#{$img}/back_reviews.jpg');
+}
+
+body.post-type-archive-gallery {
+    background-image: url('#{$img}/back_photos.jpg');
+}
+
+// On phones the fixed photographic backdrop is heavy and can jitter during
+// scroll on iOS; let it scroll with the page and sit behind the stacked
+// content instead.
+@include media-down(lg) {
+    body {
+        background-attachment: scroll;
+    }
+}

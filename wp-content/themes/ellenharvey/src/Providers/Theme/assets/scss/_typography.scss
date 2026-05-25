@@ -1,0 +1,40 @@
+@use 'common/breakpoints' as *;
+
+// ==========================================================================
+// Typography treatments for the content panel.
+//
+// Font families, sizes, and base colors come from theme.json (Arial body,
+// Verdana gold h2, etc.). This partial adds the structural touches
+// theme.json can't express: the dotted h1 rule, heading rhythm, and the
+// justified body copy of the original.
+// ==========================================================================
+
+.site-main {
+    h1 {
+        padding-bottom: 0.3125rem; // 5px
+        border-bottom: 1px dotted var(--wp--preset--color--rule-gray);
+        letter-spacing: 0.02em;
+    }
+
+    // Heading rhythm — vertical space lives on margin-block-start of the
+    // following heading, never margin-block-end (house rule).
+    h2 {
+        margin-block-start: var(--wp--preset--spacing--40);
+    }
+
+    h3 {
+        margin-block-start: var(--wp--preset--spacing--20);
+        line-height: 1.4;
+    }
+
+    p {
+        text-align: justify;
+        margin-block-start: var(--wp--preset--spacing--30);
+    }
+
+    // First child of the panel shouldn't push down from the panel top.
+    > :first-child,
+    .site-content > :first-child {
+        margin-block-start: 0;
+    }
+}

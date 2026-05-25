@@ -1,0 +1,22 @@
+{# Inner-page header: name wordmark + primary nav, sitting in the right
+   photographic column. The home page supplies its own header markup (the
+   full-width wordmark) by overriding the header block in front-page.twig. #}
+<header class="site-header">
+    <p class="site-header__logo">
+        <a href="{{ site.url }}" rel="home">
+            <img class="site-header__wordmark"
+                 src="{{ function('get_theme_file_uri', 'src/Providers/Theme/assets/images/name2.png') }}"
+                 width="515" height="33"
+                 alt="{{ site.name }}" />
+        </a>
+    </p>
+    <nav class="site-header__nav" aria-label="Primary navigation">
+        {{ function('wp_nav_menu', {
+            theme_location: 'primary',
+            container: false,
+            fallback_cb: false,
+            menu_id: '',
+            menu_class: 'site-nav'
+        }) }}
+    </nav>
+</header>

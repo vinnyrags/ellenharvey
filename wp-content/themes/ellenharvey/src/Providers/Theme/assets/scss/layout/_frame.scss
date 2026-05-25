@@ -1,0 +1,66 @@
+@use 'common/breakpoints' as *;
+
+// ==========================================================================
+// Frame — the two-column layout that defines the site.
+//
+// Desktop (faithful to the original): a 1000px centered stage. The left
+// ~485px is a dark, semi-transparent content panel (white text); the right
+// column lets the page's photographic background show through, with the
+// wordmark + nav anchored at its top.
+//
+// Mobile: the columns stack. Wordmark + nav ride at the top, the content
+// panel sits below, and the photographic background stays fixed behind —
+// a clean adaptation the original (desktop-only, fixed 1000px) never had.
+// ==========================================================================
+
+$stage-width: 1000px;
+$panel-width: 485px;
+$panel-scrim: rgba(0, 0, 0, 0.78);
+
+html {
+    overflow-y: scroll;
+}
+
+body {
+    min-height: 100vh;
+}
+
+.site-layout {
+    width: 100%;
+    max-width: $stage-width;
+    margin-inline: auto;
+    min-height: 100vh;
+
+    @include media(lg) {
+        display: grid;
+        grid-template-columns: $panel-width 1fr;
+        grid-template-areas: 'main header';
+        align-items: start;
+        column-gap: 0;
+    }
+}
+
+// --- Content panel (left on desktop) ---------------------------------------
+
+.site-main {
+    grid-area: main;
+    background-color: $panel-scrim;
+    padding: var(--wp--preset--spacing--40) var(--wp--preset--spacing--40)
+        var(--wp--preset--spacing--50);
+
+    @include media(lg) {
+        min-height: 100vh;
+        padding: 6.25rem 2.5rem 2.5rem; // 100px top / 40px sides — matches original #leftcontent
+    }
+}
+
+.site-content {
+    // Long-form measure stays readable inside the narrow panel.
+    max-width: 60ch;
+}
+
+// --- Footer landmark (visually inert; credits live on Contact) -------------
+
+.site-footer {
+    min-height: 0;
+}

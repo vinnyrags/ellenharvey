@@ -1,7 +1,50 @@
 {% extends "base.twig" %}
 
-{% block content %}
-    <main class="front-page">
-        {{ post.content }}
+{# Home differs from inner pages: the wordmark spans the full width at the
+   top, the nav sits beneath it, and a fading slideshow of review pull-quotes
+   floats over the hero photo (the body background). The two-column frame is
+   reset to a single column for `.home` in _home.scss. #}
+
+{% block header %}
+    <header class="site-header site-header--home">
+        <p class="site-header__logo site-header__logo--home">
+            <a href="{{ site.url }}" rel="home">
+                <img class="site-header__wordmark site-header__wordmark--home"
+                     src="{{ function('get_theme_file_uri', 'src/Providers/Theme/assets/images/name.png') }}"
+                     width="1000" height="33"
+                     alt="{{ site.name }}" />
+            </a>
+        </p>
+        <nav class="site-header__nav" aria-label="Primary navigation">
+            {{ function('wp_nav_menu', {
+                theme_location: 'primary',
+                container: false,
+                fallback_cb: false,
+                menu_id: '',
+                menu_class: 'site-nav'
+            }) }}
+        </nav>
+    </header>
+{% endblock %}
+
+{% block main %}
+    <main id="wp--skip-link--target" class="site-main site-main--home">
+        {# Placeholder slideshow: the four original review-quote slides on a
+           CSS crossfade. Phase 2 swaps these for featured entries pulled from
+           the Review CPT so the quotes stay editable. #}
+        <div class="home-quotes" aria-label="Review highlights">
+            {% set slides = [
+                { src: 'slide-index-1.png', alt: 'Ellen Harvey is consistently one of the best parts of the show — Columbus Live' },
+                { src: 'slide-index-2.png', alt: 'Harvey is a show all by herself — San Francisco Examiner' },
+                { src: 'slide-index-3.png', alt: 'Ellen Harvey lends stellar support, not just in the vocals but in the hilarious characterizations. — Talkin Broadway' },
+                { src: 'slide-index-4.png', alt: 'It starts with a show-stealing performance by Ellen Harvey, a fabulous actress with a voice for miles — Cleveland Plain Dealer' }
+            ] %}
+            {% for slide in slides %}
+                <img class="home-quotes__slide"
+                     src="{{ function('get_theme_file_uri', 'src/Providers/Theme/assets/images/' ~ slide.src) }}"
+                     width="400" height="200"
+                     alt="{{ slide.alt }}" />
+            {% endfor %}
+        </div>
     </main>
 {% endblock %}
