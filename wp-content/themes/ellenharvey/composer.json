@@ -1,0 +1,40 @@
+{
+  "name": "vinnyrags/ellenharvey-theme",
+  "description": "Ellen Harvey personal website — child theme on Mythus + IX",
+  "type": "project",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Vincent Ragosta"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.vincentragosta.io"
+    },
+    {
+      "type": "composer",
+      "url": "https://wpackagist.org"
+    }
+  ],
+  "require": {
+    "php": ">=8.4",
+    "vincentragosta/mythus": "^1.0",
+    "vincentragosta/ix": "^1.0",
+    "timber/timber": "2.x-dev"
+  },
+  "autoload": {
+    "psr-4": {
+      "EllenHarvey\\": "src/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "roots/wordpress-core-installer": false
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

@@ -1,0 +1,16 @@
+<?php
+
+declare(strict_types=1);
+
+use EllenHarvey\Theme;
+
+// Load parent theme's autoloader first (for IX namespace).
+$parent_autoloader = get_template_directory() . '/vendor/autoload.php';
+if (file_exists($parent_autoloader)) {
+    require_once $parent_autoloader;
+}
+
+// Load child theme's autoloader.
+require_once __DIR__ . '/vendor/autoload.php';
+
+(new Theme())->bootstrap();

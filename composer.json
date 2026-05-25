@@ -1,0 +1,62 @@
+{
+  "name": "vinnyrags/ellenharvey",
+  "description": "Ellen Harvey — personal website (singer / performer). WordPress rebuild on Mythus + IX.",
+  "type": "project",
+  "license": "proprietary",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.vincentragosta.io"
+    },
+    {
+      "type": "composer",
+      "url": "https://wpackagist.org"
+    },
+    {
+      "type": "composer",
+      "url": "https://connect.advancedcustomfields.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.4",
+    "composer/installers": "^1.12 || ^2.0",
+    "johnpbloch/wordpress": "^6.5",
+    "wpengine/advanced-custom-fields-pro": "^6.0",
+    "vincentragosta/mythus": "^1.0",
+    "vincentragosta/ix": "^1.0"
+  },
+  "extra": {
+    "wordpress-install-dir": "wp",
+    "installer-paths": {
+      "wp-content/mu-plugins/{$name}/": [
+        "type:wordpress-muplugin"
+      ],
+      "wp-content/plugins/{$name}/": [
+        "type:wordpress-plugin"
+      ],
+      "wp-content/themes/{$name}/": [
+        "type:wordpress-theme"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "johnpbloch/wordpress-core-installer": true
+    }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "@reinstall-nested"
+    ],
+    "post-update-cmd": [
+      "@reinstall-nested"
+    ],
+    "reinstall-nested": [
+      "@composer install --working-dir=wp-content/mu-plugins/mythus --no-interaction",
+      "@composer install --working-dir=wp-content/themes/ix --no-interaction"
+    ]
+  }
+}
