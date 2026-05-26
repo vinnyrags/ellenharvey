@@ -1,0 +1,40 @@
+{% extends "base.twig" %}
+
+{# Photos archive — a grid of production posters. Each poster opens a
+   lightbox that pages through that production's photos; the photo set
+   rides along as JSON the lightbox script reads on click. Mirrors the
+   original photos.htm, minus its jQuery/mootools lightbox. #}
+
+{% block content %}
+    <div class="photos">
+        <h1>{{ title }}</h1>
+
+        <ul class="gallery-grid">
+            {% for gallery in galleries %}
+                {% set photodata = [] %}
+                {% for p in gallery.photos %}
+                    {% set photodata = photodata|merge([{
+                        'src':     p.src,
+                        'caption': p.caption ?: gallery.title,
+                        'alt':     p.alt ?: gallery.title
+                    }]) %}
+                {% endfor %}
+
+                <li class="gallery-grid__item">
+                    <button type="button" class="gallery-poster" aria-label="View {{ gallery.title }} photos">
+                        {% if gallery.poster %}
+                            <img class="gallery-poster__image"
+                                 src="{{ gallery.poster.src }}"
+                                 alt="{{ gallery.poster.alt ?: gallery.title }}"
+                                 loading="lazy">
+                        {% endif %}
+                        <span class="gallery-poster__label">{{ gallery.title }}</span>
+                    </button>
+                    <script type="application/json" class="gallery-poster__data">{{ photodata|json_encode|raw }}</script>
+                </li>
+            {% else %}
+                <li>Photos coming soon.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

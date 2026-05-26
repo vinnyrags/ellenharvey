@@ -1,0 +1,49 @@
+{
+    "key": "group_gallery_fields",
+    "title": "Gallery",
+    "fields": [
+        {
+            "key": "field_gallery_poster",
+            "label": "Poster",
+            "name": "poster",
+            "type": "image",
+            "instructions": "The show logo or poster shown in the Photos grid. Clicking it opens this production's photos.",
+            "required": 1,
+            "return_format": "id",
+            "preview_size": "medium",
+            "library": "all",
+            "mime_types": "jpg,jpeg,png,gif,webp"
+        },
+        {
+            "key": "field_gallery_photos",
+            "label": "Photos",
+            "name": "photos",
+            "type": "gallery",
+            "instructions": "Production photos, in the order they should appear in the lightbox. Each image's caption is shown beneath it.",
+            "required": 0,
+            "return_format": "id",
+            "preview_size": "thumbnail",
+            "insert": "append",
+            "library": "all",
+            "mime_types": "jpg,jpeg,png,gif,webp"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "gallery"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0
+}

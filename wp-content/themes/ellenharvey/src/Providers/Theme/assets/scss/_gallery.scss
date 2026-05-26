@@ -1,0 +1,161 @@
+@use 'common/breakpoints' as *;
+
+// ==========================================================================
+// Photos — a grid of production posters that open a lightbox.
+//
+// The grid lives in the dark content panel; the lightbox is a full-viewport
+// overlay appended to <body> by gallery-lightbox.js. Mirrors the original
+// photos.htm grid + lightbox, dependency-free.
+// ==========================================================================
+
+.gallery-grid {
+    margin: 0;
+    margin-block-start: var(--wp--preset--spacing--30);
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--wp--preset--spacing--30);
+}
+
+.gallery-poster {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem;
+    background: none;
+    border: 1px solid transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s ease, opacity 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+        border-color: var(--wp--preset--color--rule-gray);
+    }
+}
+
+.gallery-poster__image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.gallery-poster__label {
+    font-size: var(--wp--preset--font-size--small);
+    color: var(--wp--preset--color--white);
+    text-align: center;
+}
+
+// --------------------------------------------------------------------------
+// Lightbox overlay
+// --------------------------------------------------------------------------
+
+.has-lightbox-open {
+    overflow: hidden;
+}
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    &.is-open {
+        display: flex;
+    }
+}
+
+.lightbox__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+}
+
+.lightbox__figure {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    max-width: 90vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.lightbox__image {
+    display: block;
+    max-width: 90vw;
+    max-height: 80vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+.lightbox__caption {
+    max-width: 60ch;
+    text-align: center;
+    font-size: var(--wp--preset--font-size--small);
+    font-style: italic;
+    color: var(--wp--preset--color--white);
+}
+
+.lightbox__counter {
+    position: absolute;
+    inset-block-start: 1rem;
+    inset-inline-start: 1rem;
+    z-index: 1;
+    margin: 0;
+    font-size: var(--wp--preset--font-size--small);
+    color: var(--wp--preset--color--rule-gray);
+}
+
+.lightbox__close,
+.lightbox__nav {
+    position: absolute;
+    z-index: 2;
+    background: none;
+    border: 0;
+    color: var(--wp--preset--color--white);
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+        color: var(--wp--preset--color--gold);
+    }
+}
+
+.lightbox__close {
+    inset-block-start: 0.5rem;
+    inset-inline-end: 1rem;
+    font-size: 2.5rem;
+}
+
+.lightbox__nav {
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem;
+    padding: 0 1rem;
+}
+
+.lightbox__nav--prev {
+    inset-inline-start: 0.25rem;
+}
+
+.lightbox__nav--next {
+    inset-inline-end: 0.25rem;
+}
+
+@include reduced-motion {
+    .gallery-poster,
+    .lightbox__close,
+    .lightbox__nav {
+        transition: none;
+    }
+}

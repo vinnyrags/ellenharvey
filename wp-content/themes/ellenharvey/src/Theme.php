@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EllenHarvey;
 
 use EllenHarvey\Providers\Credit\CreditProvider;
+use EllenHarvey\Providers\Gallery\GalleryProvider;
 use EllenHarvey\Providers\Review\ReviewProvider;
 use EllenHarvey\Providers\Theme\ThemeProvider;
 use IX\Theme as BaseTheme;
@@ -24,5 +25,6 @@ class Theme extends BaseTheme
         ThemeProvider::class,
         CreditProvider::class,
         ReviewProvider::class,
+        GalleryProvider::class,
     ];
 }
