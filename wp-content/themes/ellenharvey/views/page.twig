@@ -1,0 +1,14 @@
+{% extends "base.twig" %}
+
+{# Static pages (News, Media, Contact). The title gets the same dotted-rule
+   h1 as the CPT archives; the body is editor content, so Ellen can update
+   News, swap Media embeds, or edit Contact details from wp-admin. #}
+
+{% block content %}
+    <article class="page">
+        <h1>{{ post.title }}</h1>
+        <div class="page__content">
+            {{ post.content }}
+        </div>
+    </article>
+{% endblock %}
