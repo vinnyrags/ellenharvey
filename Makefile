@@ -108,10 +108,12 @@ wp: ## Run a WP-CLI command (use ARGS="...")
 
 ##@ Deploy (staging)
 
-deploy: ## Push code to staging (git push production main → build runs on server)
+deploy: ## Push code to GitHub + staging (origin, then production → build runs on server)
 	@if [ "$$(git rev-parse --abbrev-ref HEAD)" != "main" ]; then \
 		echo "✗ Refusing to deploy: not on 'main' (on '$$(git rev-parse --abbrev-ref HEAD)')."; exit 1; \
 	fi
+	@echo "→ Pushing main to GitHub (origin)..."
+	git push origin main
 	@echo "→ Pushing main to staging (auto-builds on server)..."
 	git push production main
 	@echo "✓ Code deployed — verify at $(STAGING_URL)"
