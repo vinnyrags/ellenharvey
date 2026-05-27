@@ -10,13 +10,26 @@ MYTHUS_DIR      := $(CURDIR)/wp-content/mu-plugins/mythus
 COMPOSER_DIRS := $(CURDIR) $(MYTHUS_DIR) $(IX_DIR) $(CHILD_THEME_DIR)
 NPM_DIRS      := $(IX_DIR) $(CHILD_THEME_DIR)
 
-LOCAL_URL := https://ellenharvey.ddev.site
+LOCAL_URL   := https://ellenharvey.ddev.site
+UPLOADS_DIR := $(CURDIR)/wp-content/uploads
+
+# ─── Staging (ellenharvey.vincentragosta.io) ─────────────────────────────────
+# Hosted on the vincentragosta.io droplet. Code deploys via `git push
+# production main` (post-receive hook runs composer/npm/build). Content
+# (DB + uploads) is pushed separately — it lives in the DB, not in git.
+# No production env yet; DNS cutover of ellenharvey.net comes later.
+
+STAGING_HOST := root@174.138.70.29
+STAGING_DIR  := /var/www/ellenharvey.vincentragosta.io
+STAGING_WP   := $(STAGING_DIR)/wp
+STAGING_URL  := https://ellenharvey.vincentragosta.io
 
 # ─── Phony targets ───────────────────────────────────────────────────────────
 
 .PHONY: help \
 	start stop \
-	install build watch clean autoload update wp
+	install build watch clean autoload update wp \
+	deploy push-content pull-content ssh
 
 .DEFAULT_GOAL := help
 
@@ -92,6 +105,54 @@ watch: ## Watch + rebuild child theme assets on change
 wp: ## Run a WP-CLI command (use ARGS="...")
 	$(if $(ARGS),,$(error Usage: make wp ARGS="post-type list"))
 	ddev wp $(ARGS)
+
+##@ Deploy (staging)
+
+deploy: ## Push code to staging (git push production main → build runs on server)
+	@if [ "$$(git rev-parse --abbrev-ref HEAD)" != "main" ]; then \
+		echo "✗ Refusing to deploy: not on 'main' (on '$$(git rev-parse --abbrev-ref HEAD)')."; exit 1; \
+	fi
+	@echo "→ Pushing main to staging (auto-builds on server)..."
+	git push production main
+	@echo "✓ Code deployed — verify at $(STAGING_URL)"
+
+push-content: ## Push local DB + uploads to staging (overwrites staging content)
+	@echo "→ Exporting local database..."
+	ddev export-db --gzip=false --file=/tmp/eh-export.sql
+	@echo "→ Uploading + importing database on staging..."
+	scp -q /tmp/eh-export.sql $(STAGING_HOST):/tmp/eh-export.sql
+	ssh $(STAGING_HOST) "wp db import /tmp/eh-export.sql --path=$(STAGING_WP) --allow-root"
+	@echo "→ Rewriting URLs ($(LOCAL_URL) → $(STAGING_URL))..."
+	ssh $(STAGING_HOST) "wp search-replace '$(LOCAL_URL)' '$(STAGING_URL)' --path=$(STAGING_WP) --allow-root --precise --all-tables --quiet"
+	@echo "→ Discouraging search engines (staging mirror) + flushing..."
+	ssh $(STAGING_HOST) "wp option update blog_public 0 --path=$(STAGING_WP) --allow-root --quiet && wp cache flush --path=$(STAGING_WP) --allow-root --quiet && wp rewrite flush --hard --path=$(STAGING_WP) --allow-root --quiet"
+	@echo "→ Syncing uploads..."
+	rsync -az --delete $(UPLOADS_DIR)/ $(STAGING_HOST):$(STAGING_DIR)/wp-content/uploads/
+	ssh $(STAGING_HOST) "chown -R www-data:www-data $(STAGING_DIR)/wp-content/uploads"
+	@echo "→ Cleaning up..."
+	rm -f /tmp/eh-export.sql
+	ssh $(STAGING_HOST) "rm -f /tmp/eh-export.sql"
+	@echo "✓ Content pushed to $(STAGING_URL)"
+
+pull-content: ## Pull staging DB + uploads to local DDEV (overwrites local content)
+	@echo "→ Exporting staging database..."
+	ssh $(STAGING_HOST) "wp db export /tmp/eh-export.sql --path=$(STAGING_WP) --allow-root"
+	scp -q $(STAGING_HOST):/tmp/eh-export.sql /tmp/eh-export.sql
+	@echo "→ Importing into DDEV..."
+	ddev import-db --file=/tmp/eh-export.sql
+	@echo "→ Rewriting URLs ($(STAGING_URL) → $(LOCAL_URL))..."
+	ddev wp search-replace '$(STAGING_URL)' '$(LOCAL_URL)' --precise --all-tables --quiet
+	ddev wp option update blog_public 1 --quiet
+	ddev wp cache flush --quiet && ddev wp rewrite flush --hard --quiet
+	@echo "→ Syncing uploads..."
+	rsync -az --delete $(STAGING_HOST):$(STAGING_DIR)/wp-content/uploads/ $(UPLOADS_DIR)/
+	@echo "→ Cleaning up..."
+	rm -f /tmp/eh-export.sql
+	ssh $(STAGING_HOST) "rm -f /tmp/eh-export.sql"
+	@echo "✓ Local synced from $(STAGING_URL)"
+
+ssh: ## SSH into the staging deploy directory
+	ssh -t $(STAGING_HOST) "cd $(STAGING_DIR) && bash"
 
 ##@ Cleanup
 
