@@ -23,7 +23,7 @@
     "johnpbloch/wordpress": "^6.5",
     "wpengine/advanced-custom-fields-pro": "^6.0",
     "vincentragosta/mythus": "^1.0",
-    "vincentragosta/ix": "^1.0"
+    "vincentragosta/ix": "^1.2"
   },
   "extra": {
     "wordpress-install-dir": "wp",

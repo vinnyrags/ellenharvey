@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "635dbecf73f0f363aa1464ae03d014e8",
+    "content-hash": "acf202b4caada5a07d57be9813859a83",
     "packages": [
         {
             "name": "composer/installers",
@@ -743,16 +743,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.37.0",
+            "version": "v1.38.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "6a21eb99c6973357967f6ce3708cd55a6bec6315"
+                "reference": "14c5439eec4ccff081ac14eca2dc57feb2a66d92"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/6a21eb99c6973357967f6ce3708cd55a6bec6315",
-                "reference": "6a21eb99c6973357967f6ce3708cd55a6bec6315",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/14c5439eec4ccff081ac14eca2dc57feb2a66d92",
+                "reference": "14c5439eec4ccff081ac14eca2dc57feb2a66d92",
                 "shasum": ""
             },
             "require": {
@@ -804,7 +804,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.37.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.38.1"
             },
             "funding": [
                 {
@@ -824,7 +824,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-04-10T17:25:58+00:00"
+            "time": "2026-05-26T12:51:13+00:00"
         },
         {
             "name": "timber/timber",
@@ -832,17 +832,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/timber/timber.git",
-                "reference": "7947b631ad8d1efe858e778d6fc1b348419f8b9b"
+                "reference": "b91d24b9d76b44e49a345d2844ed5dfc21b118a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/timber/timber/zipball/7947b631ad8d1efe858e778d6fc1b348419f8b9b",
-                "reference": "7947b631ad8d1efe858e778d6fc1b348419f8b9b",
+                "url": "https://api.github.com/repos/timber/timber/zipball/b91d24b9d76b44e49a345d2844ed5dfc21b118a0",
+                "reference": "b91d24b9d76b44e49a345d2844ed5dfc21b118a0",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.2",
-                "twig/twig": "^3.26"
+                "twig/twig": "^3.27"
             },
             "require-dev": {
                 "composer/installers": "^2",
@@ -942,20 +942,20 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2026-05-22T10:55:10+00:00"
+            "time": "2026-05-29T14:43:04+00:00"
         },
         {
             "name": "twig/twig",
-            "version": "v3.26.0",
+            "version": "v3.27.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "1fcae487b180d78e6351f4e0afa91f9eab96a2bc"
+                "reference": "ae2071bffb38f04847fc0864d730c94b9cb8ab74"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/1fcae487b180d78e6351f4e0afa91f9eab96a2bc",
-                "reference": "1fcae487b180d78e6351f4e0afa91f9eab96a2bc",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/ae2071bffb38f04847fc0864d730c94b9cb8ab74",
+                "reference": "ae2071bffb38f04847fc0864d730c94b9cb8ab74",
                 "shasum": ""
             },
             "require": {
@@ -1010,7 +1010,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/v3.26.0"
+                "source": "https://github.com/twigphp/Twig/tree/v3.27.1"
             },
             "funding": [
                 {
@@ -1022,21 +1022,21 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-20T07:31:59+00:00"
+            "time": "2026-05-30T17:09:26+00:00"
         },
         {
             "name": "vincentragosta/ix",
-            "version": "v1.1.1",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vinnyrags/IX.git",
-                "reference": "a16ade0665bac557b45cb77cb9e78099580516dc"
+                "reference": "dd5d7f388bc1fdd7e6e0020dd857ad393ae9fcb9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packages.vincentragosta.io/dist/vincentragosta/ix/vincentragosta-ix-a16ade0665bac557b45cb77cb9e78099580516dc-zip-7c254a.zip",
-                "reference": "a16ade0665bac557b45cb77cb9e78099580516dc",
-                "shasum": "f6a58455ed0a478aa6984928abdf874e1cf9c01c"
+                "url": "https://packages.vincentragosta.io/dist/vincentragosta/ix/vincentragosta-ix-dd5d7f388bc1fdd7e6e0020dd857ad393ae9fcb9-zip-d3d0c5.zip",
+                "reference": "dd5d7f388bc1fdd7e6e0020dd857ad393ae9fcb9",
+                "shasum": "59676f95cb4d1d4ff560927a755f1067a1b06ffa"
             },
             "require": {
                 "enshrined/svg-sanitize": "^0.22.0",
@@ -1073,10 +1073,10 @@
             ],
             "description": "A foundational WordPress parent theme with Timber support",
             "support": {
-                "source": "https://github.com/vinnyrags/IX/tree/v1.1.1",
+                "source": "https://github.com/vinnyrags/IX/tree/v1.2.0",
                 "issues": "https://github.com/vinnyrags/IX/issues"
             },
-            "time": "2026-05-05T03:58:20+00:00"
+            "time": "2026-06-02T15:43:49+00:00"
         },
         {
             "name": "vincentragosta/mythus",
@@ -1134,10 +1134,10 @@
         },
         {
             "name": "wpengine/advanced-custom-fields-pro",
-            "version": "6.8.1",
+            "version": "6.8.2",
             "dist": {
                 "type": "zip",
-                "url": "https://connect.advancedcustomfields.com/v2/plugins/composer_download?s=composer&p=pro&t=6.8.1"
+                "url": "https://connect.advancedcustomfields.com/v2/plugins/composer_download?s=composer&p=pro&t=6.8.2"
             },
             "require": {
                 "composer/installers": "~1.0 || ~2.0"
