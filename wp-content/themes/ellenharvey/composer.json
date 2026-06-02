@@ -21,7 +21,6 @@
   "require": {
     "php": ">=8.4",
     "vincentragosta/mythus": "^1.0",
-    "vincentragosta/ix": "^1.0",
     "timber/timber": "2.x-dev"
   },
   "autoload": {
