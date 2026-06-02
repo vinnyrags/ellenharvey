@@ -85,11 +85,11 @@
     color: var(--wp--preset--color--rule-gray);
 }
 
+// The "Commercial list upon request…" line is an <h2> in the original, set like
+// the other gold section titles — so it inherits the résumé's gold h2 styling
+// (uppercase via `.resume h2`); only the spacing above it is bespoke.
 .resume__footer-note {
     margin-block-start: var(--wp--preset--spacing--40);
-    font-size: var(--wp--preset--font-size--small);
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
 }
 
 .resume__detail {
