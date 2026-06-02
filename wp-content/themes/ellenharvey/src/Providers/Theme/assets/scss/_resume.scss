@@ -48,7 +48,7 @@
     width: 100%;
     margin-block-start: var(--wp--preset--spacing--20);
     border-collapse: separate;
-    border-spacing: 0 var(--wp--preset--spacing--20);
+    border-spacing: 0;
     font-size: var(--wp--preset--font-size--small);
     line-height: 1.4;
 
@@ -109,26 +109,12 @@
     font-size: var(--wp--preset--font-size--large); // original set these as h2-sized links
 }
 
-// Phones: three narrow columns become unreadable — stack each credit.
+// Phones: keep the three-column production / role / venue shape (don't stack);
+// just tighten the inter-column gap so the columns stay readable on a narrow
+// screen.
 @include media-down(sm) {
-    .resume__credits,
-    .resume__credits tbody,
-    .resume__credit,
     .resume__credits th,
     .resume__credits td {
-        display: block;
-        width: auto;
-    }
-
-    .resume__credit {
-        margin-block-start: var(--wp--preset--spacing--20);
-    }
-
-    .resume__production {
-        font-weight: 700;
-    }
-
-    .resume__role::before {
-        content: '\2014\00a0'; // em dash + nbsp
+        padding-inline-end: 0.4rem;
     }
 }
