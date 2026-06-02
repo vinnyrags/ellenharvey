@@ -92,13 +92,15 @@
         },
         {
             "key": "field_resume_headshots",
-            "label": "Headshots (zip or PDF)",
+            "label": "Headshots",
             "name": "headshots",
-            "type": "file",
-            "instructions": "Uploaded file for the \"Download Headshots\" link. Leave empty to hide the link.",
+            "type": "gallery",
+            "instructions": "Headshot images for the \"Download Headshots\" links. Each renders as a thumbnail linking to the full-size image. Leave empty to hide.",
             "required": 0,
             "return_format": "array",
-            "library": "all"
+            "library": "all",
+            "insert": "append",
+            "preview_size": "medium"
         }
     ],
     "location": [

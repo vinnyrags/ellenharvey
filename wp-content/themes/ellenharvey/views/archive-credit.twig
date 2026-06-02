@@ -72,10 +72,23 @@
         {% endif %}
 
         {% if d.pdf or d.headshots %}
-            <p class="resume__downloads">
-                {% if d.pdf %}<a href="{{ d.pdf.url }}">Download PDF</a>{% endif %}
-                {% if d.headshots %}<a href="{{ d.headshots.url }}">Download Headshots</a>{% endif %}
-            </p>
+            <div class="resume__downloads">
+                {% if d.pdf %}
+                    <a class="resume__download" href="{{ d.pdf.url }}" target="_blank" rel="noopener">Download PDF</a>
+                {% endif %}
+                {% if d.headshots %}
+                    <div class="resume__headshots">
+                        <span class="resume__download">Download Headshots:</span>
+                        <span class="resume__headshots-thumbs">
+                            {% for shot in d.headshots %}
+                                <a href="{{ shot.url }}" target="_blank" rel="noopener">
+                                    <img src="{{ shot.sizes.medium|default(shot.url) }}" alt="{{ shot.alt|default('Ellen Harvey headshot') }}" loading="lazy">
+                                </a>
+                            {% endfor %}
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
         {% endif %}
     </div>
 {% endblock %}

@@ -105,8 +105,34 @@
 .resume__downloads {
     margin-block-start: var(--wp--preset--spacing--40);
     display: flex;
-    gap: var(--wp--preset--spacing--40);
+    flex-direction: column;
+    gap: var(--wp--preset--spacing--20);
     font-size: var(--wp--preset--font-size--large); // original set these as h2-sized links
+}
+
+// The "Download PDF" link and the "Download Headshots:" label share the look.
+.resume__download {
+    font-size: var(--wp--preset--font-size--large);
+}
+
+.resume__headshots {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wp--preset--spacing--10);
+}
+
+// Three headshot thumbnails in a row, each linking to the full-size image —
+// portrait crops kept at ~150px tall like the original.
+.resume__headshots-thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--wp--preset--spacing--20);
+
+    img {
+        display: block;
+        height: 150px;
+        width: auto;
+    }
 }
 
 // Phones: keep the three-column production / role / venue shape (don't stack);
