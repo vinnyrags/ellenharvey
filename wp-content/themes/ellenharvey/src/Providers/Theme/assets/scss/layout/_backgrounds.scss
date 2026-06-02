@@ -14,19 +14,22 @@
 
 $img: '../../src/Providers/Theme/assets/images';
 
+// Faithful to the original: each photo sits at its natural size (1440x900),
+// centered-top on a black field, scrolling with the page — no `cover`
+// upscaling and no `fixed` attachment. On screens wider than the photo, black
+// shows at the edges, exactly as the original does.
 body {
     background-color: #000;
     background-repeat: no-repeat;
     background-position: center top;
-    background-size: cover;
-    background-attachment: fixed;
     // Sensible default until a more specific route rule below matches.
     background-image: url('#{$img}/back_home.jpg');
 }
 
-// Home
-body.home {
-    background-image: url('#{$img}/back_home.jpg');
+// Home — the hero photo now comes from the Home page's Group block background
+// (editable in the block editor), so the body itself stays black behind it.
+body.overlay-header {
+    background-image: none;
 }
 
 // Static pages (slug classes via ThemeProvider::addPageSlugBodyClass)
@@ -53,13 +56,4 @@ body.post-type-archive-review {
 
 body.post-type-archive-gallery {
     background-image: url('#{$img}/back_photos.jpg');
-}
-
-// On phones the fixed photographic backdrop is heavy and can jitter during
-// scroll on iOS; let it scroll with the page and sit behind the stacked
-// content instead.
-@include media-down(lg) {
-    body {
-        background-attachment: scroll;
-    }
 }

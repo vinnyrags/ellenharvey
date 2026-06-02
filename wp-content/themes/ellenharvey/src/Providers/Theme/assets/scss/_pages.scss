@@ -49,3 +49,38 @@
         margin-block-start: var(--wp--preset--spacing--40);
     }
 }
+
+// News page copy. The original set this text inside a heading tag, so it
+// reads gold Verdana 18px and left-aligned — not the usual white Arial
+// justified body. Reproduce that look here, on the News page only.
+body.page-news .page__content p {
+    font-family: var(--wp--preset--font-family--verdana);
+    font-size: var(--wp--preset--font-size--large); // 18px
+    color: var(--wp--preset--color--gold);
+    text-align: left;
+    line-height: normal; // the original set none on this text — match the browser default
+}
+
+// Social icon row on the News page (Twitter / Instagram), echoing the
+// original's pair of 24px linked icons below the follow-her text.
+.news-social {
+    display: flex;
+    gap: 20px; // matches the original's 20px spacer cell between the icons
+    // Top gap inherits the global paragraph rhythm (.site-main p) so the icon
+    // row stays in step with the paragraphs above it.
+
+    a {
+        display: inline-flex; // kill the inline-image baseline gap under each icon
+    }
+
+    img {
+        // Brighten slightly on hover, standing in for the original's
+        // swap to the coloured icon variant.
+        transition: opacity 0.2s ease;
+    }
+
+    a:hover img,
+    a:focus-visible img {
+        opacity: 0.7;
+    }
+}

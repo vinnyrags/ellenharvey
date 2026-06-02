@@ -49,9 +49,10 @@
         { "slug": "medium", "name": "Medium", "size": "13px" },
         { "slug": "regular", "name": "Regular", "size": "16px" },
         { "slug": "large", "name": "Large", "size": "18px" },
+        { "slug": "x-large", "name": "Extra Large", "size": "22px" },
         {
-          "slug": "x-large",
-          "name": "Extra Large",
+          "slug": "xx-large",
+          "name": "2X Large",
           "size": "30px",
           "fluid": { "min": "24px", "max": "30px" }
         }
@@ -86,7 +87,7 @@
       "h1": {
         "typography": {
           "fontFamily": "var:preset|font-family|arial",
-          "fontSize": "var:preset|font-size|x-large",
+          "fontSize": "var:preset|font-size|xx-large",
           "fontWeight": "400",
           "textTransform": "uppercase"
         },

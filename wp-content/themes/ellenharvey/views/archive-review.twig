@@ -14,7 +14,11 @@
 
                 {% for review in group.reviews %}
                     <blockquote class="reviews__quote">
-                        <p class="reviews__quote-text">{{ review.quote }}</p>
+                        {# The quote field is an ACF textarea with wpautop, so it
+                           arrives wrapped in <p> tags — strip them so it renders
+                           as plain text inside our styled paragraph (each quote
+                           is a single paragraph, as in the original). #}
+                        <p class="reviews__quote-text">{{ review.quote|striptags|trim }}</p>
                         {% if review.source %}
                             <cite class="reviews__quote-source">{{ review.source }}</cite>
                         {% endif %}

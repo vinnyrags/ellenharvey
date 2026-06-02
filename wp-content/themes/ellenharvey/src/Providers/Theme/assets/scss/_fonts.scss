@@ -1,0 +1,19 @@
+// ==========================================================================
+// Self-hosted web fonts.
+//
+// Marcellus (Google Fonts, SIL Open Font License) — an elegant, wide
+// inscriptional serif used for the homepage press pull-quotes. It reproduces
+// the small-caps display type of the original site's baked-in PNG quote cards.
+// Self-hosted (not loaded from Google) so it renders identically on the Linux
+// production server, needs no third-party request, and works offline.
+//
+// url() resolves relative to the compiled CSS at dist/css/theme.css.
+// ==========================================================================
+
+@font-face {
+    font-family: 'Marcellus';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../../src/Providers/Theme/assets/fonts/marcellus.woff2') format('woff2');
+}

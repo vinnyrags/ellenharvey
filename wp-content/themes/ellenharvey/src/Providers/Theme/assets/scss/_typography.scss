@@ -28,8 +28,9 @@
     }
 
     p {
-        text-align: justify;
-        margin-block-start: var(--wp--preset--spacing--30);
+        // No opinionated alignment — paragraphs use the natural start alignment.
+        // (Components that genuinely want justify/center set it themselves.)
+        margin-block-start: var(--wp--preset--spacing--40);
     }
 
     // First child of the panel shouldn't push down from the panel top.

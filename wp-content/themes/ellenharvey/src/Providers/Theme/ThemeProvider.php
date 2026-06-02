@@ -46,8 +46,22 @@ class ThemeProvider extends BaseThemeProvider
         add_action('wp_enqueue_scripts', [$this, 'enqueueAssets']);
         add_action('after_setup_theme', [$this, 'registerMenus']);
         add_filter('body_class', [$this, 'addPageSlugBodyClass']);
+        add_filter('body_class', [$this, 'addOverlayHeaderBodyClass']);
+
+        // Hide the front-end admin bar for everyone.
+        add_filter('show_admin_bar', '__return_false');
+
+        // Re-enable core/pullquote (disabled by default in IX's DisableBlocks
+        // feature). It powers the homepage press-quote slider — each rotating
+        // quote is an editable core/pullquote inside the ix/content-slider.
+        add_filter('theme/disabled_block_types', static function (array $blocks): array {
+            return array_values(array_diff($blocks, ['core/pullquote']));
+        });
 
         parent::register();
+
+        // Load/save this provider's ACF JSON (the Page Layout field group).
+        $this->acfManager->registerSavePath();
     }
 
     /**
@@ -108,6 +122,27 @@ class ThemeProvider extends BaseThemeProvider
             if ($post instanceof \WP_Post && $post->post_name !== '') {
                 $classes[] = 'page-' . $post->post_name;
             }
+        }
+
+        return $classes;
+    }
+
+    /**
+     * Add an `overlay-header` body class when a page has the "Overlay Header"
+     * layout toggle on (the Page Layout ACF field group).
+     *
+     * Drives the full-bleed-hero treatment in _home.scss: the header is laid
+     * over the top of a full-bleed Group-block background instead of sitting in
+     * the standard content frame. CMS-controlled, so any page can opt in.
+     *
+     * @param string[] $classes
+     * @return string[]
+     */
+    public function addOverlayHeaderBodyClass(array $classes): array
+    {
+        $id = get_queried_object_id();
+        if ($id && function_exists('get_field') && get_field('overlay_header', $id)) {
+            $classes[] = 'overlay-header';
         }
 
         return $classes;

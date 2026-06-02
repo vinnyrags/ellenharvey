@@ -1,48 +1,14 @@
 {% extends "base.twig" %}
 
-{# Home differs from inner pages: the wordmark spans the full width at the
-   top, the nav sits beneath it, and a fading slideshow of review pull-quotes
-   floats over the hero photo (the body background). The two-column frame is
-   reset to a single column for `.home` in _home.scss. #}
+{# Home uses the standard header (header.twig — logo + nav, both right-aligned);
+   _home.scss simply overlays it on the full-bleed hero. The hero photo and the
+   crossfading press pull-quotes are CMS-managed: the Home page content is a
+   core/group (its background image is the hero) wrapping an ix/content-slider
+   (transition: fade) full of core/pullquote blocks. #}
 
-{% block header %}
-    <header class="site-header site-header--home">
-        <p class="site-header__logo site-header__logo--home">
-            <a href="{{ site.url }}" rel="home">
-                <img class="site-header__wordmark site-header__wordmark--home"
-                     src="{{ function('get_theme_file_uri', 'src/Providers/Theme/assets/images/name.png') }}"
-                     width="1000" height="33"
-                     alt="{{ site.name }}" />
-            </a>
-        </p>
-        <nav class="site-header__nav" aria-label="Primary navigation">
-            {{ function('wp_nav_menu', {
-                theme_location: 'primary',
-                container: false,
-                fallback_cb: false,
-                menu_id: '',
-                menu_class: 'site-nav'
-            }) }}
-        </nav>
-    </header>
-{% endblock %}
-
+{# `main` is the content *inside* base.twig's <main class="site-main"> — don't
+   reopen another <main> here (that nests them and duplicates the skip-link id).
+   On home the base panel's dark scrim is reset to transparent in _home.scss. #}
 {% block main %}
-    <main id="wp--skip-link--target" class="site-main site-main--home">
-        {# Featured reviews rotate over the hero on a CSS crossfade — the
-           modern, editable replacement for the original's static quote
-           slides. Each is a review flagged "Feature on homepage". #}
-        {% if featured_reviews|length %}
-            <div class="home-quotes" aria-label="Review highlights">
-                {% for review in featured_reviews %}
-                    <blockquote class="home-quotes__slide">
-                        <p class="home-quotes__text">{{ review.quote }}</p>
-                        {% if review.source %}
-                            <cite class="home-quotes__source">{{ review.source }}</cite>
-                        {% endif %}
-                    </blockquote>
-                {% endfor %}
-            </div>
-        {% endif %}
-    </main>
+    {{ post.content }}
 {% endblock %}

@@ -25,8 +25,9 @@
     margin: 0;
     text-align: justify;
 
-    &::before { content: '\201C'; }
-    &::after  { content: '\201D'; }
+    // Straight double quotes wrapping the text inline, as in the original.
+    &::before { content: '\0022'; }
+    &::after  { content: '\0022'; }
 }
 
 .reviews__quote-source {
@@ -35,7 +36,7 @@
     font-style: italic;
     color: var(--wp--preset--color--white);
 
-    &::before { content: '\2014\00a0'; } // em dash + nbsp
+    &::before { content: '-\00a0'; } // hyphen + nbsp, matches the original "-Source"
 }
 
 .reviews__back-to-top {

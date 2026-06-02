@@ -15,7 +15,6 @@
 
 $stage-width: 1000px;
 $panel-width: 485px;
-$panel-scrim: rgba(0, 0, 0, 0.78);
 
 html {
     overflow-y: scroll;
@@ -44,13 +43,26 @@ body {
 
 .site-main {
     grid-area: main;
-    background-color: $panel-scrim;
+    // Mobile (stacked, no columns): a flat dark scrim keeps the white text
+    // readable over the full-bleed photo. This is our phone adaptation; the
+    // original was desktop-only.
+    background-color: rgba(0, 0, 0, 0.78);
     padding: var(--wp--preset--spacing--40) var(--wp--preset--spacing--40)
         var(--wp--preset--spacing--50);
 
     @include media(lg) {
         min-height: 100vh;
         padding: 6.25rem 2.5rem 2.5rem; // 100px top / 40px sides — matches original #leftcontent
+
+        // Desktop two-column: swap the flat scrim for the original #left tile —
+        // a feathered, ~14%-opacity dark overlay (back_content.png, 485px wide =
+        // the panel width) repeated down the column. The photographic body
+        // background bleeds through it, and the tile's transparent edges soften
+        // the seam where the panel meets the open photo, exactly as the original.
+        background-color: transparent;
+        background-image: url('../../src/Providers/Theme/assets/images/back_content.png');
+        background-repeat: repeat-y;
+        background-position: center top;
     }
 }
 

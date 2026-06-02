@@ -2,9 +2,9 @@
 /**
  * Front page.
  *
- * Extends IX's front-page behavior by also gathering the reviews flagged
- * "Feature on homepage" so front-page.twig can rotate them as highlights
- * over the hero (replacing the original's static quote slides).
+ * The homepage crossfades the original site's pre-rendered quote slides over
+ * the hero (see front-page.twig) — no extra context beyond the standard post
+ * is needed. The `review` CPT still powers the /reviews/ archive.
  *
  * @package EllenHarvey
  */
@@ -13,19 +13,5 @@ use Timber\Timber;
 
 $context         = Timber::context();
 $context['post'] = Timber::get_post();
-
-$context['featured_reviews'] = Timber::get_posts([
-    'post_type'      => 'review',
-    'posts_per_page' => -1,
-    'orderby'        => 'menu_order',
-    'order'          => 'ASC',
-    'meta_query'     => [
-        [
-            'key'     => 'featured',
-            'value'   => '1',
-            'compare' => '=',
-        ],
-    ],
-]);
 
 Timber::render(['front-page.twig', 'page.twig'], $context);

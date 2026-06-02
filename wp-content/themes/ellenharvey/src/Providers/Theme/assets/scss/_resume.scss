@@ -10,11 +10,32 @@
 // where three columns can't breathe. Renders inside the dark content panel.
 // ==========================================================================
 
-.resume__credentials {
+// The original résumé is set entirely in Verdana — gold headings (h2) and
+// white credit/detail text (h3) — with only the "resume" h1 in Arial. Default
+// the whole block to Verdana; the h1 keeps Arial from its own element style.
+.resume {
+    font-family: var(--wp--preset--font-family--verdana);
+
+    // Gold section + detail headings render uppercase, as in the original
+    // (which typed them in caps). The download links below are <p>, not <h2>,
+    // so they keep their natural casing.
+    h2 {
+        text-transform: uppercase;
+    }
+}
+
+// Union line — a gold heading in the original (an <h2> there).
+.resume__unions {
     margin: 0;
     margin-block-start: var(--wp--preset--spacing--20);
-    padding: 0;
-    list-style: none;
+    font-size: var(--wp--preset--font-size--large); // 18px
+    color: var(--wp--preset--color--gold);
+}
+
+// Eyes / hair / vocal range — one small white line beneath the union heading.
+.resume__stats {
+    margin: 0;
+    margin-block-start: var(--wp--preset--spacing--20);
     font-size: var(--wp--preset--font-size--small);
     line-height: 1.5;
 }
@@ -49,6 +70,7 @@
 // the role/venue columns to nothing.
 .resume__production {
     width: 42%;
+    text-transform: uppercase; // production titles are set in caps in the original
 }
 
 .resume__role,
@@ -58,6 +80,7 @@
 
 .resume__note {
     display: block;
+    text-transform: none; // director notes stay mixed-case, e.g. "(dir. Susan Stroman)"
     font-style: italic;
     color: var(--wp--preset--color--rule-gray);
 }
@@ -83,7 +106,7 @@
     margin-block-start: var(--wp--preset--spacing--40);
     display: flex;
     gap: var(--wp--preset--spacing--40);
-    font-size: var(--wp--preset--font-size--small);
+    font-size: var(--wp--preset--font-size--large); // original set these as h2-sized links
 }
 
 // Phones: three narrow columns become unreadable — stack each credit.

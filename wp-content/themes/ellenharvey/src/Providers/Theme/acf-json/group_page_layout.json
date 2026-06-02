@@ -1,0 +1,36 @@
+{
+    "key": "group_page_layout",
+    "title": "Page Layout",
+    "fields": [
+        {
+            "key": "field_overlay_header",
+            "label": "Overlay Header",
+            "name": "overlay_header",
+            "type": "true_false",
+            "instructions": "Overlay the header on top of a full-bleed background hero (as on the home page). Add the hero photo as a Group block's background image and put the page content inside that group.",
+            "required": 0,
+            "ui": 1,
+            "ui_on_text": "On",
+            "ui_off_text": "Off",
+            "default_value": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "page"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "side",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0
+}

@@ -3,115 +3,141 @@
 // ==========================================================================
 // Home page.
 //
-// Resets the two-column frame to a single column: full-width wordmark, nav
-// beneath it, and a fading slideshow of review pull-quotes floating over the
-// hero photo (the back_home.jpg body background).
+// The Home page content is a single core/group whose background image is the
+// hero photo (editable in the block editor), wrapping an ix/content-slider
+// (transition: fade) full of core/pullquote blocks. This file:
+//   - lets the hero group fill the viewport (full-bleed),
+//   - overlays the full-width wordmark + nav at the top, and
+//   - floats the slider into the lower-right, and styles the pullquotes as the
+//     original's white small-caps Marcellus press quotes.
 // ==========================================================================
 
-body.home {
+body.overlay-header {
     .site-layout {
         display: block;
         position: relative;
         min-height: 100vh;
+        max-width: none; // drop the 1000px cap so the hero photo is full-bleed
+        width: 100%;
     }
 
-    // No dark scrim on home — the content floats directly over the hero.
-    .site-main--home {
+    // No dark content panel on home — the page content floats over the hero.
+    .site-main {
         background-color: transparent;
+        background-image: none;
         padding: 0;
         min-height: 0;
     }
-}
 
-.site-header--home {
-    padding-block: var(--wp--preset--spacing--30);
-
-    .site-header__logo--home {
-        text-align: center;
-
-        @include media(lg) {
-            text-align: left;
-        }
+    // The hero group: full-bleed background photo (set on the Group block in
+    // the editor). It holds a core/columns row (left column empty, right column
+    // has the quote slider); layout/placement is CMS-driven, not positioned.
+    .site-main > .wp-block-group {
+        min-height: 100vh; // full-bleed hero (the photo comes from the Group's background)
+        // WP auto-adds 1.25em padding to groups with a background; with the
+        // 100vh columns inside, the vertical part pushed the page past the
+        // viewport (a stray vertical scroll), so drop it. Keep a side gutter
+        // (matching the header) so the content respects the global padding and
+        // the slider doesn't touch the viewport edges on narrow screens — the
+        // background photo stays full-bleed behind the padding.
+        padding-block: 0;
+        padding-inline: var(--wp--preset--spacing--40);
     }
 
-    // Nav pulled to the right beneath the full-width wordmark, echoing the
-    // original (#right nav offset to the right half of the stage).
-    .site-header__nav .site-nav {
-        justify-content: center;
-
-        @include media(lg) {
-            justify-content: flex-end;
-        }
+    // Give the columns row the hero's full height so the columns' own
+    // "vertical alignment: center" (set on the block in the editor) actually
+    // centres the quote within the hero. This is the only layout CSS needed.
+    .wp-block-columns {
+        min-height: 100vh;
     }
 }
 
-// --- Quote highlights (featured reviews) -----------------------------------
-//
-// A stack of pull-quotes crossfading over the hero. Visibility is driven by
-// home-quotes.js toggling `.is-visible` (handles any number of quotes); CSS
-// owns the fade. Floats into the lower-right over the hero on desktop,
-// echoing the original #flash slideshow position.
+// --- Header overlay --------------------------------------------------------
+// On home the standard header is laid over the top of the full-bleed hero,
+// centred to the 1000px stage. Logo + nav alignment come from _header.scss.
+body.overlay-header .site-header {
+    position: absolute;
+    top: 0;
+    inset-inline: 0; // span the layout; max-width + auto margins centre it
+    max-width: 1000px;
+    margin-inline: auto;
+    z-index: 2;
+}
 
-.home-quotes {
-    position: relative;
+// --- The press-quote slider ------------------------------------------------
+// Lives in the right column of the hero's columns row (see the Home page
+// content). The 400px card centres within that ~half-stage column, landing it
+// in the right of the 1000px stage like the original — and the columns'
+// vertical-align:center floats it to the middle of the hero.
+body.overlay-header .wp-block-ix-content-slider {
     width: 400px;
     max-width: 100%;
-    min-height: 200px;
-    margin: var(--wp--preset--spacing--50) auto 0;
+    box-sizing: border-box; // keep the scrim padding inside the width (no overflow on narrow screens)
+    margin-inline: auto; // centre the card within its column
+    // Same translucent panel fill as the nav (see --eh-panel-scrim); padding
+    // gives the quotes room inside the box.
+    background-color: var(--eh-panel-scrim);
+    padding: var(--wp--preset--spacing--30);
+}
 
-    @include media(lg) {
+// Pull-quotes as the original's white, letter-spaced small-caps Marcellus
+// press quotes with a soft drop shadow. Scoped to the home hero so core/pullquote
+// elsewhere keeps its default look.
+body.overlay-header .wp-block-pullquote {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    text-align: center;
+
+    blockquote {
         margin: 0;
-        position: absolute;
-        top: 360px;
-        right: 0;
-        text-align: right;
+        padding: 0;
+        border: 0;
     }
-}
 
-.home-quotes__slide {
-    position: absolute;
-    inset: 0;
-    margin: 0;
-    opacity: 0;
-    transition: opacity 0.8s ease;
-    pointer-events: none;
-
-    &.is-visible {
-        opacity: 1;
-        pointer-events: auto;
+    p,
+    cite {
+        margin: 0;
+        // Marcellus (self-hosted, see _fonts.scss) — the elegant wide small-caps
+        // serif matching the original PNG quote cards. Georgia is the fallback.
+        font-family: 'Marcellus', Georgia, 'Times New Roman', serif;
+        font-variant-caps: small-caps; // natural case -> two-tier small caps
+        font-style: normal; // <cite> defaults to italic
+        font-weight: 400;
+        line-height: 1.25;
+        letter-spacing: 0.04em;
+        color: var(--wp--preset--color--white);
+        // Marcellus ships in a single weight; a hairline same-colour stroke
+        // thickens the glyphs a touch, reading slightly bolder like the PNGs.
+        -webkit-text-stroke: 0.4px currentColor;
+        // Soft dark shadow lifts the white type off the photo.
+        text-shadow:
+            0 1px 3px rgba(0, 0, 0, 0.9),
+            0 0 6px rgba(0, 0, 0, 0.6);
     }
-}
 
-.home-quotes__text {
-    margin: 0;
-    font-family: var(--wp--preset--font-family--georgia);
-    font-size: var(--wp--preset--font-size--large);
-    font-style: italic;
-    line-height: 1.4;
-    color: var(--wp--preset--color--white);
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
-    text-align: inherit;
+    // The quote — the larger, prominent line, wrapped in curly quotes.
+    p {
+        font-size: var(--wp--preset--font-size--x-large); // 22px
 
-    &::before { content: '\201C'; }
-    &::after  { content: '\201D'; }
-}
+        &::before {
+            content: '\201C';
+        }
 
-.home-quotes__source {
-    display: block;
-    margin-block-start: var(--wp--preset--spacing--20);
-    font-family: var(--wp--preset--font-family--arial);
-    font-size: var(--wp--preset--font-size--small);
-    font-style: normal;
-    color: var(--wp--preset--color--gold);
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+        &::after {
+            content: '\201D';
+        }
+    }
 
-    &::before { content: '\2014\00a0'; } // em dash + nbsp
-}
+    // The attribution — smaller, dash-prefixed, as in the original.
+    cite {
+        display: block;
+        margin-block-start: 0.25rem;
+        font-size: var(--wp--preset--font-size--large); // 18px
 
-@include reduced-motion {
-    // No crossfade: home-quotes.js leaves the first quote visible; just
-    // disable the transition so it appears immediately.
-    .home-quotes__slide {
-        transition: none;
+        &::before {
+            content: '- ';
+        }
     }
 }

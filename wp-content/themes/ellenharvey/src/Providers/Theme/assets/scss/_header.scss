@@ -3,38 +3,29 @@
 // ==========================================================================
 // Site header — name wordmark + primary nav.
 //
-// Desktop: sits in the right photographic column, top-aligned, with the
-// wordmark above a horizontal nav (white, hover red, current crimson) —
-// matching the original #right column.
-// Mobile: a full-width bar at the top of the stacked layout.
+// A simple container of two items — the logo and the nav — both right-aligned
+// at every viewport. On inner pages it sits in the right photographic column;
+// on home _home.scss overlays this same header on the hero. No per-page or
+// per-breakpoint variants.
 // ==========================================================================
 
 .site-header {
     grid-area: header;
     display: flex;
     flex-direction: column;
-    gap: var(--wp--preset--spacing--20);
     padding: var(--wp--preset--spacing--30) var(--wp--preset--spacing--40);
-
-    @include media(lg) {
-        padding-top: 0.75rem; // ~original #logo padding-top:10px
-        padding-inline: 0 0;
-        padding-left: 1.5rem;
-    }
 }
 
 .site-header__logo {
     margin: 0;
-
-    @include media(lg) {
-        text-align: right;
-    }
+    text-align: right; // right-align the wordmark at all widths
 }
 
 .site-header__wordmark {
     display: inline-block;
     max-width: 100%;
     height: auto;
+    vertical-align: bottom; // drop the inline-image baseline gap below the wordmark
 }
 
 // --- Primary navigation ----------------------------------------------------
@@ -47,10 +38,7 @@
         display: flex;
         flex-wrap: wrap;
         gap: 0;
-
-        @include media(lg) {
-            justify-content: flex-end;
-        }
+        justify-content: flex-end; // right-align the nav at all widths
     }
 
     li {
@@ -59,13 +47,19 @@
 
     a {
         display: block;
-        padding: 0.25rem 0.625rem; // 10px sides, matches original
+        padding: 0 0.625rem; // 0 10px, matches original (#topnav ul a)
         font-family: var(--wp--preset--font-family--arial);
         font-size: 0.75rem; // 12px
-        line-height: 2;
+        line-height: 2; // 24px box height, matches original
         text-transform: capitalize;
         text-decoration: none;
         color: var(--wp--preset--color--white);
+
+        // Semi-transparent box behind each link. Links are contiguous (no
+        // gap), so they form one continuous translucent bar across the nav.
+        // The fill (the original's back_content.png tile) is shared with the
+        // homepage quote slider — see --eh-panel-scrim in index.scss.
+        background-color: var(--eh-panel-scrim);
 
         &:hover,
         &:focus-visible {

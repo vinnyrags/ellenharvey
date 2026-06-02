@@ -5,6 +5,7 @@
 // black, dark content panel over a photographic column) with a sensible
 // responsive adaptation for phones/tablets the original never had.
 
+@use 'fonts';
 @use 'layout/frame';
 @use 'layout/backgrounds';
 @use 'header';
@@ -14,3 +15,11 @@
 @use 'resume';
 @use 'gallery';
 @use 'pages';
+
+// --- Shared design tokens (not expressible in theme.json) ------------------
+:root {
+    // Translucent dark panel fill — the original's back_content.png tile fill.
+    // Reused behind the primary nav (_header) and the homepage quote slider
+    // (_home). Change it once here to update both.
+    --eh-panel-scrim: rgba(54, 54, 54, 0.15);
+}

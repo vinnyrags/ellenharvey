@@ -9,14 +9,18 @@
     <div class="resume">
         <h1>{{ title }}</h1>
 
+        {# Credentials, mirroring the original: the union line as a gold heading,
+           then eyes/hair/vocal range as one pipe-separated line beneath it. #}
         {% set d = details %}
-        {% if d.unions or d.eyes or d.hair or d.vocal_range %}
-            <ul class="resume__credentials">
-                {% if d.unions %}<li>{{ d.unions }}</li>{% endif %}
-                {% if d.eyes %}<li>Eyes: {{ d.eyes }}</li>{% endif %}
-                {% if d.hair %}<li>Hair: {{ d.hair }}</li>{% endif %}
-                {% if d.vocal_range %}<li>Vocal Range: {{ d.vocal_range }}</li>{% endif %}
-            </ul>
+        {% if d.unions %}
+            <p class="resume__unions">{{ d.unions }}</p>
+        {% endif %}
+        {% set stats = [] %}
+        {% if d.eyes %}{% set stats = stats|merge(['Eyes: ' ~ d.eyes]) %}{% endif %}
+        {% if d.hair %}{% set stats = stats|merge(['Hair: ' ~ d.hair]) %}{% endif %}
+        {% if d.vocal_range %}{% set stats = stats|merge(['Vocal Range: ' ~ d.vocal_range]) %}{% endif %}
+        {% if stats %}
+            <p class="resume__stats">{{ stats|join(' | ') }}</p>
         {% endif %}
 
         {% for group in groups %}
