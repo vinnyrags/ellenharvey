@@ -64,80 +64,8 @@ body.overlay-header .site-header {
     z-index: 2;
 }
 
-// --- The press-quote slider ------------------------------------------------
-// Lives in the right column of the hero's columns row (see the Home page
-// content). The 400px card centres within that ~half-stage column, landing it
-// in the right of the 1000px stage like the original — and the columns'
+// The press-quote slider itself (the 400px translucent card and the Marcellus
+// pull-quote typography) lives in _press-quotes.scss — scoped to the
+// ix/content-slider block so the same rules apply in the editor canvas. It
+// sits in the right column of the hero's columns row; the columns'
 // vertical-align:center floats it to the middle of the hero.
-body.overlay-header .wp-block-ix-content-slider {
-    width: 400px;
-    max-width: 100%;
-    box-sizing: border-box; // keep the scrim padding inside the width (no overflow on narrow screens)
-    margin-inline: auto; // centre the card within its column
-    // Same translucent panel fill as the nav (see --eh-panel-scrim); padding
-    // gives the quotes room inside the box.
-    background-color: var(--eh-panel-scrim);
-    padding: var(--wp--preset--spacing--30);
-}
-
-// Pull-quotes as the original's white, letter-spaced small-caps Marcellus
-// press quotes with a soft drop shadow. Scoped to the home hero so core/pullquote
-// elsewhere keeps its default look.
-body.overlay-header .wp-block-pullquote {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    text-align: center;
-
-    blockquote {
-        margin: 0;
-        padding: 0;
-        border: 0;
-    }
-
-    p,
-    cite {
-        margin: 0;
-        // Marcellus (self-hosted, see _fonts.scss) — the elegant wide small-caps
-        // serif matching the original PNG quote cards. Georgia is the fallback.
-        font-family: 'Marcellus', Georgia, 'Times New Roman', serif;
-        font-variant-caps: small-caps; // natural case -> two-tier small caps
-        font-style: normal; // <cite> defaults to italic
-        font-weight: 400;
-        line-height: 1.25;
-        letter-spacing: 0.04em;
-        color: var(--wp--preset--color--white);
-        // Marcellus ships in a single weight; a hairline same-colour stroke
-        // thickens the glyphs a touch, reading slightly bolder like the PNGs.
-        -webkit-text-stroke: 0.4px currentColor;
-        // Soft dark shadow lifts the white type off the photo.
-        text-shadow:
-            0 1px 3px rgba(0, 0, 0, 0.9),
-            0 0 6px rgba(0, 0, 0, 0.6);
-    }
-
-    // The quote — the larger, prominent line, wrapped in curly quotes.
-    p {
-        font-size: var(--wp--preset--font-size--x-large); // 22px
-
-        &::before {
-            content: '\201C';
-        }
-
-        &::after {
-            content: '\201D';
-        }
-    }
-
-    // The attribution — smaller, dash-prefixed, as in the original.
-    cite {
-        display: block;
-        margin-block-start: 0.25rem;
-        font-size: var(--wp--preset--font-size--large); // 18px
-
-        &::before {
-            content: '- ';
-        }
-    }
-}

@@ -1,0 +1,32 @@
+// ==========================================================================
+// Block-editor styles for the home page hero.
+//
+// Loaded into the editor canvas via add_editor_style() (see ThemeProvider) so
+// editing the homepage quote slider looks like the front end: the translucent
+// quote card, the white small-caps Marcellus pull-quotes, and none of
+// core/pullquote's heavy top/bottom borders. The editor shows every slide
+// stacked (Splide only runs on the front end), so we add spacing between them.
+//
+// Pulls in the shared slider / pull-quote rules; only the editor-specific bits
+// live here.
+// ==========================================================================
+
+@use '../press-quotes';
+
+// Marcellus, self-hosted. The shared partial references the family, but the
+// @font-face must be declared here too — the front-end _fonts.scss isn't loaded
+// in the editor. url() is relative to this compiled file at
+// dist/css/features/editor.css (one level deeper than dist/css/theme.css).
+@font-face {
+    font-family: 'Marcellus';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../../../src/Providers/Theme/assets/fonts/marcellus.woff2') format('woff2');
+}
+
+// The editor renders every quote stacked (no Splide), so separate them inside
+// the card instead of overlapping like the rotating front-end slides.
+.wp-block-ix-content-slider .wp-block-pullquote + .wp-block-pullquote {
+    margin-block-start: var(--wp--preset--spacing--40);
+}

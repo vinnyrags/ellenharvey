@@ -92,6 +92,19 @@ class ThemeProvider extends BaseThemeProvider
     }
 
     /**
+     * Add the child theme's block-editor styles on top of IX's.
+     *
+     * Loads the homepage hero styles into the editor canvas so editing the
+     * quote slider matches the front end (translucent card, Marcellus
+     * pull-quotes, no core/pullquote borders). See assets/scss/features/editor.scss.
+     */
+    public function addThemeSupports(): void
+    {
+        parent::addThemeSupports();
+        add_editor_style('dist/css/features/editor.css');
+    }
+
+    /**
      * Register the primary navigation menu location consumed by header.twig.
      * IX adds `add_theme_support('menus')` but registers no locations.
      */

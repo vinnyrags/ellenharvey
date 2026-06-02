@@ -11,15 +11,8 @@
 @use 'header';
 @use 'typography';
 @use 'home';
+@use 'press-quotes'; // also pulled into the editor (features/editor.scss); defines --eh-panel-scrim
 @use 'reviews';
 @use 'resume';
 @use 'gallery';
 @use 'pages';
-
-// --- Shared design tokens (not expressible in theme.json) ------------------
-:root {
-    // Translucent dark panel fill — the original's back_content.png tile fill.
-    // Reused behind the primary nav (_header) and the homepage quote slider
-    // (_home). Change it once here to update both.
-    --eh-panel-scrim: rgba(54, 54, 54, 0.15);
-}
