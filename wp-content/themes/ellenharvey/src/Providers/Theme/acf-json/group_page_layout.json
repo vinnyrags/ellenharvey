@@ -7,7 +7,7 @@
             "label": "Overlay Header",
             "name": "overlay_header",
             "type": "true_false",
-            "instructions": "Overlay the header on top of a full-bleed background hero (as on the home page). Add the hero photo as a Group block's background image and put the page content inside that group.",
+            "instructions": "Overlay the header on top of the page content.",
             "required": 0,
             "ui": 1,
             "ui_on_text": "On",

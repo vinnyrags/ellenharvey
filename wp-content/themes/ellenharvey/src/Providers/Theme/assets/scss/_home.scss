@@ -12,7 +12,12 @@
 //     original's white small-caps Marcellus press quotes.
 // ==========================================================================
 
-body.overlay-header {
+// Full-bleed layout — the home page (Overlay Header toggle) and News (always),
+// whose own group/columns provide the hero with a Group-block background photo.
+// This is layout only; the header overlay is a separate, toggle-only concern
+// below, so News can be full-bleed without the header sitting over its content.
+body.overlay-header,
+body.page-news {
     .site-layout {
         display: block;
         position: relative;
@@ -21,7 +26,7 @@ body.overlay-header {
         width: 100%;
     }
 
-    // No dark content panel on home — the page content floats over the hero.
+    // No dark content panel — the page content floats over the hero.
     .site-main {
         background-color: transparent;
         background-image: none;
