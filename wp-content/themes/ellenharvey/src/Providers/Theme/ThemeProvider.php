@@ -51,11 +51,11 @@ class ThemeProvider extends BaseThemeProvider
         // Hide the front-end admin bar for everyone.
         add_filter('show_admin_bar', '__return_false');
 
-        // Re-enable core/pullquote (disabled by default in IX's DisableBlocks
-        // feature). It powers the homepage press-quote slider — each rotating
-        // quote is an editable core/pullquote inside the ix/content-slider.
+        // Re-enable core blocks IX disables by default (DisableBlocks feature):
+        // - core/pullquote powers the homepage press-quote slider.
+        // - core/social-links powers the News page's follow row.
         add_filter('theme/disabled_block_types', static function (array $blocks): array {
-            return array_values(array_diff($blocks, ['core/pullquote']));
+            return array_values(array_diff($blocks, ['core/pullquote', 'core/social-links', 'core/social-link']));
         });
 
         parent::register();

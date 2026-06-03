@@ -1,14 +1,26 @@
 {% extends "base.twig" %}
 
-{# Static pages (News, Media, Contact). The title gets the same dotted-rule
-   h1 as the CPT archives; the body is editor content, so Ellen can update
-   News, swap Media embeds, or edit Contact details from wp-admin. #}
+{# Static pages (News, Media, Contact).
 
-{% block content %}
-    <article class="page">
-        <h1>{{ post.title }}</h1>
-        <div class="page__content">
-            {{ post.content }}
+   Overlay-header pages (News) render their own full-bleed group/columns layout
+   — like the home page — so the background photo can live on a block instead of
+   the body, and the editor shows it. Their heading lives in the content.
+
+   The rest keep the standard dotted-rule h1 + dark content panel; the body is
+   editor content, so Ellen can update News, swap Media embeds, or edit Contact
+   details from wp-admin. #}
+
+{% block main %}
+    {% if post.meta('overlay_header') %}
+        {{ post.content }}
+    {% else %}
+        <div class="site-content">
+            <article class="page">
+                <h1>{{ post.title }}</h1>
+                <div class="page__content">
+                    {{ post.content }}
+                </div>
+            </article>
         </div>
-    </article>
+    {% endif %}
 {% endblock %}

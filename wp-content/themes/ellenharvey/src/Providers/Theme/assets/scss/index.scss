@@ -12,6 +12,7 @@
 @use 'typography';
 @use 'home';
 @use 'press-quotes'; // also pulled into the editor (features/editor.scss); defines --eh-panel-scrim
+@use 'news'; // also pulled into the editor (features/editor.scss)
 @use 'reviews';
 @use 'resume';
 @use 'gallery';

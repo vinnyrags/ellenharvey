@@ -12,6 +12,7 @@
 // ==========================================================================
 
 @use '../press-quotes';
+@use '../news';
 
 // Marcellus, self-hosted. The shared partial references the family, but the
 // @font-face must be declared here too — the front-end _fonts.scss isn't loaded

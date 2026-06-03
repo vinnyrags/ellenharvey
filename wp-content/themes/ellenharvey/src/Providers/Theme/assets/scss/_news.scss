@@ -1,0 +1,51 @@
+// ==========================================================================
+// News page content panel.
+//
+// The News page mirrors the home page: a full-bleed core/group (the photo as a
+// block background) wrapping a core/columns — a left content column (.news-panel)
+// and an empty right column the photo shows through. This styles that panel:
+// the dark scrim, the dotted-rule heading, the gold Verdana copy and the social
+// row.
+//
+// Scoped to the .news-panel column (not body.page-news) so the exact same look
+// applies inside the block editor, where there's no page body class — pulled
+// into both theme.css (index.scss) and the editor stylesheet (features/editor.scss).
+// ==========================================================================
+
+.news-panel {
+    box-sizing: border-box;
+    // Dark scrim keeps the copy readable over the photo — the original ran this
+    // text over its feathered #left content tile.
+    background-color: rgba(0, 0, 0, 0.55);
+    padding: var(--wp--preset--spacing--40) var(--wp--preset--spacing--40)
+        var(--wp--preset--spacing--50);
+    color: var(--wp--preset--color--white);
+
+    // Heading — the same dotted-rule h1 as the other pages (normally from
+    // .site-main h1, which the editor canvas doesn't have).
+    h1 {
+        margin: 0;
+        padding-bottom: 0.3125rem; // 5px
+        border-bottom: 1px dotted var(--wp--preset--color--rule-gray);
+        letter-spacing: 0.02em;
+    }
+
+    // News copy — gold Verdana, left-aligned, as in the original (which set this
+    // text in a heading tag rather than the usual white justified body).
+    p {
+        font-family: var(--wp--preset--font-family--verdana);
+        font-size: var(--wp--preset--font-size--large); // 18px
+        color: var(--wp--preset--color--gold);
+        text-align: left;
+        line-height: normal; // the original set none on this text
+    }
+
+    a {
+        color: var(--wp--preset--color--gold);
+    }
+
+    // Follow row — the original's small linked icons below the copy.
+    .wp-block-social-links {
+        margin-block-start: var(--wp--preset--spacing--30);
+    }
+}

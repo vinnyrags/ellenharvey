@@ -26,17 +26,7 @@ body {
     background-image: url('#{$img}/back_home.jpg');
 }
 
-// Home — the hero photo now comes from the Home page's Group block background
-// (editable in the block editor), so the body itself stays black behind it.
-body.overlay-header {
-    background-image: none;
-}
-
 // Static pages (slug classes via ThemeProvider::addPageSlugBodyClass)
-body.page-news {
-    background-image: url('#{$img}/back_news.jpg');
-}
-
 body.page-media {
     background-image: url('#{$img}/back_media.jpg');
 }
@@ -56,4 +46,11 @@ body.post-type-archive-review {
 
 body.post-type-archive-gallery {
     background-image: url('#{$img}/back_photos.jpg');
+}
+
+// Keep last: overlay-header pages (Home, News) carry their photo on a Group
+// block background (editable in the block editor), so the body stays black
+// behind it — winning over the slug rules above via source order.
+body.overlay-header {
+    background-image: none;
 }
