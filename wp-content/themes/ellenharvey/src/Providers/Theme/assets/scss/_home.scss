@@ -6,25 +6,28 @@
 // The Home page content is a single core/group whose background image is the
 // hero photo (editable in the block editor), wrapping an ix/content-slider
 // (transition: fade) full of core/pullquote blocks. This file:
-//   - lets the hero group fill the viewport (full-bleed),
-//   - overlays the full-width wordmark + nav at the top, and
+//   - lets the hero group fill the height within the 1000px stage,
+//   - overlays the wordmark + nav at the top of the stage, and
 //   - floats the slider into the lower-right, and styles the pullquotes as the
 //     original's white small-caps Marcellus press quotes.
 // ==========================================================================
 
-// Full-bleed layout — the home page (Overlay Header toggle) and the block-built
-// pages News + Résumé, whose own group/columns provide the hero with a
-// Group-block background photo.
+// Hero layout — the home page (Overlay Header toggle) and the block-built pages
+// News + Résumé + Reviews, whose own group/columns provide the hero with a
+// Group-block background photo. The hero fills the height but stays within the
+// 1000px stage (black at the edges on wide screens, like the original): a fixed
+// background is painted only inside its element's box, so capping the stage
+// clips the photo to 1000px too.
 body.overlay-header,
 body.page-news,
 body.page-resume,
 body.page-reviews {
     .site-layout {
-        display: block;
+        display: block; // override the two-column frame; the hero stacks
         position: relative;
         min-height: 100vh;
-        max-width: none; // drop the 1000px cap so the hero photo is full-bleed
-        width: 100%;
+        max-width: 1000px; // keep the stage — photo + content stay within 1000px
+        margin-inline: auto;
     }
 
     // No dark content panel — the page content floats over the hero.
@@ -35,17 +38,16 @@ body.page-reviews {
         min-height: 0;
     }
 
-    // The hero group: full-bleed background photo (set on the Group block in
-    // the editor). It holds a core/columns row (left column empty, right column
-    // has the quote slider); layout/placement is CMS-driven, not positioned.
+    // The hero group: background photo (set on the Group block in the editor),
+    // filling the stage. It holds a core/columns row (left column empty, right
+    // column has the quote slider); layout/placement is CMS-driven, not positioned.
     .site-main > .wp-block-group {
-        min-height: 100vh; // full-bleed hero (the photo comes from the Group's background)
+        min-height: 100vh; // fill the viewport height (the photo is the Group's background)
         // WP auto-adds 1.25em padding to groups with a background; with the
         // 100vh columns inside, the vertical part pushed the page past the
         // viewport (a stray vertical scroll), so drop it. Keep a side gutter
-        // (matching the header) so the content respects the global padding and
-        // the slider doesn't touch the viewport edges on narrow screens — the
-        // background photo stays full-bleed behind the padding.
+        // (matching the header) so the content doesn't touch the stage edges —
+        // the background photo fills the stage behind the padding.
         padding-block: 0;
         padding-inline: var(--wp--preset--spacing--40);
     }
@@ -71,10 +73,10 @@ body.page-reviews .site-main > .wp-block-group {
 
 
 // --- Header overlay --------------------------------------------------------
-// The header is laid over the top of the full-bleed hero (centred to the 1000px
-// stage) so the background photo sits flush with the top of the page instead of
-// being pushed down by the header. Home opts in via the toggle; News always does
-// (its photo is a Group-block background). Logo + nav alignment come from
+// The header is laid over the top of the hero (centred to the 1000px stage) so
+// the background photo sits flush with the top of the page instead of being
+// pushed down by the header. Home opts in via the toggle; the block pages always
+// do (their photo is a Group-block background). Logo + nav alignment come from
 // _header.scss.
 body.overlay-header .site-header,
 body.page-news .site-header,

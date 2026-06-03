@@ -71,13 +71,13 @@ class ThemeProvider extends BaseThemeProvider
     }
 
     /**
-     * Register block style variants for the résumé (and reusable elsewhere).
+     * Register block style variants for the résumé / reviews (reusable anywhere).
      *
      * Selectable from each block's Styles panel; styled as `.is-style-{name}`
-     * in _resume.scss (theme.css + the editor stylesheet). Look only — font size
-     * stays in each block's typography (Size) dropdown.
+     * in _block-styles.scss (theme.css + the editor stylesheet). Each variant is
+     * a complete preset including its font size.
      *  - core/heading "Section"   — gold uppercase section titles.
-     *  - core/heading "Underline" — dotted rule beneath the heading.
+     *  - core/heading "Underline" — page title with a dotted rule beneath it.
      *  - core/paragraph "Lead"    — the gold credential / lead line.
      *  - core/table "Plain"       — borderless rows for clean lists.
      *  - core/quote "Press quote" — a press pull-quote (straight-quoted text +
