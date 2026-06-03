@@ -58,9 +58,13 @@ body.page-news {
 }
 
 // --- Header overlay --------------------------------------------------------
-// On home the standard header is laid over the top of the full-bleed hero,
-// centred to the 1000px stage. Logo + nav alignment come from _header.scss.
-body.overlay-header .site-header {
+// The header is laid over the top of the full-bleed hero (centred to the 1000px
+// stage) so the background photo sits flush with the top of the page instead of
+// being pushed down by the header. Home opts in via the toggle; News always does
+// (its photo is a Group-block background). Logo + nav alignment come from
+// _header.scss.
+body.overlay-header .site-header,
+body.page-news .site-header {
     position: absolute;
     top: 0;
     inset-inline: 0; // span the layout; max-width + auto margins centre it
