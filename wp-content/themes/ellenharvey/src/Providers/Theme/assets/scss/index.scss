@@ -14,6 +14,6 @@
 @use 'press-quotes'; // also pulled into the editor (features/editor.scss); defines --eh-panel-scrim
 @use 'news'; // also pulled into the editor (features/editor.scss)
 @use 'reviews';
-@use 'resume';
+@use 'block-styles'; // reusable block style variants (also in the editor)
 @use 'gallery';
 @use 'pages';

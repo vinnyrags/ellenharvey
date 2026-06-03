@@ -20,7 +20,8 @@
         { "slug": "gold", "name": "Gold", "color": "#ffcc00" },
         { "slug": "red", "name": "Red", "color": "#ff0000" },
         { "slug": "crimson", "name": "Crimson", "color": "#cc0000" },
-        { "slug": "rule-gray", "name": "Rule Gray", "color": "#999999" }
+        { "slug": "rule-gray", "name": "Rule Gray", "color": "#999999" },
+        { "slug": "scrim", "name": "Panel Scrim", "color": "rgba(0, 0, 0, 0.6)" }
       ]
     },
     "typography": {

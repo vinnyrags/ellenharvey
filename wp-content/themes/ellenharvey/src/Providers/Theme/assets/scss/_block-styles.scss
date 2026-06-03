@@ -1,0 +1,46 @@
+// ==========================================================================
+// Reusable block style variants (register_block_style in ThemeProvider).
+//
+// Selectable from each block's Styles panel and usable on any page — so they
+// live here, not in a one-off page file. Look only (colour / case); font size,
+// spacing, borders and the rest stay in each block's own controls / theme.json.
+// Loaded into both theme.css (index.scss) and the editor (features/editor.scss).
+// ==========================================================================
+
+// core/heading · "Section": gold uppercase section title.
+.is-style-section {
+    font-weight: 400;
+    color: var(--wp--preset--color--gold);
+    text-transform: uppercase;
+}
+
+// core/paragraph · "Lead": the gold credential / lead line.
+.is-style-lead {
+    color: var(--wp--preset--color--gold);
+}
+
+// core/heading · "Underline": a dotted rule beneath the heading (page titles).
+.is-style-underline {
+    padding-bottom: 0.3125rem; // 5px
+    border-bottom: 1px dotted var(--wp--preset--color--rule-gray);
+}
+
+// core/table · "Plain": borderless rows for clean lists (not a data grid). Top-
+// aligned cells with a small inter-column gap; overrides core's bordered table.
+.wp-block-table.is-style-plain {
+    table {
+        border-collapse: collapse;
+    }
+
+    td,
+    th {
+        border: 0;
+        padding: 0 0.75rem 0 0;
+        vertical-align: top;
+    }
+
+    td:last-child,
+    th:last-child {
+        padding-inline-end: 0;
+    }
+}

@@ -71,13 +71,17 @@ class ThemeProvider extends BaseThemeProvider
      * Selectable from each block's Styles panel; styled as `.is-style-{name}`
      * in _resume.scss (theme.css + the editor stylesheet). Look only — font size
      * stays in each block's typography (Size) dropdown.
-     *  - core/heading "Section" — gold uppercase section titles.
-     *  - core/paragraph "Lead"  — the gold credential / lead line.
+     *  - core/heading "Section"   — gold uppercase section titles.
+     *  - core/heading "Underline" — dotted rule beneath the heading.
+     *  - core/paragraph "Lead"    — the gold credential / lead line.
+     *  - core/table "Plain"       — borderless rows for clean lists.
      */
     public function registerBlockStyles(): void
     {
         register_block_style('core/heading', ['name' => 'section', 'label' => __('Section', 'ellenharvey')]);
+        register_block_style('core/heading', ['name' => 'underline', 'label' => __('Underline', 'ellenharvey')]);
         register_block_style('core/paragraph', ['name' => 'lead', 'label' => __('Lead', 'ellenharvey')]);
+        register_block_style('core/table', ['name' => 'plain', 'label' => __('Plain', 'ellenharvey')]);
     }
 
     /**
