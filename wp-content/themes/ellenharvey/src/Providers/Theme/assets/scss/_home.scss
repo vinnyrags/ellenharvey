@@ -12,12 +12,12 @@
 //     original's white small-caps Marcellus press quotes.
 // ==========================================================================
 
-// Full-bleed layout — the home page (Overlay Header toggle) and News (always),
-// whose own group/columns provide the hero with a Group-block background photo.
-// This is layout only; the header overlay is a separate, toggle-only concern
-// below, so News can be full-bleed without the header sitting over its content.
+// Full-bleed layout — the home page (Overlay Header toggle) and the block-built
+// pages News + Résumé, whose own group/columns provide the hero with a
+// Group-block background photo.
 body.overlay-header,
-body.page-news {
+body.page-news,
+body.page-resume {
     .site-layout {
         display: block;
         position: relative;
@@ -57,13 +57,20 @@ body.page-news {
     }
 }
 
-// News content is top-aligned (unlike home's vertically-centred slider), so the
-// overlaid header would sit on the copy. Pad the top of the hero group to drop
-// the content below the header — the background photo fills that padding too, so
-// the photo stays flush with the top of the page while the content reads below
-// the header, where it sat before the header floated over the hero.
-body.page-news .site-main > .wp-block-group {
+// News + Résumé content is top-aligned (unlike home's vertically-centred
+// slider), so the overlaid header would sit on the copy. Pad the top of the hero
+// group to drop the content below the header — the background photo fills that
+// padding too, so the photo stays flush with the top of the page while the
+// content reads below the header.
+body.page-news .site-main > .wp-block-group,
+body.page-resume .site-main > .wp-block-group {
     padding-block-start: 6rem; // ≈ the header height
+}
+
+// Résumé is a long, scrolling page, so a cover photo would stretch as the group
+// grows. Pin it as a fixed backdrop the content scrolls over instead.
+body.page-resume .site-main > .wp-block-group {
+    background-attachment: fixed;
 }
 
 // --- Header overlay --------------------------------------------------------
@@ -73,7 +80,8 @@ body.page-news .site-main > .wp-block-group {
 // (its photo is a Group-block background). Logo + nav alignment come from
 // _header.scss.
 body.overlay-header .site-header,
-body.page-news .site-header {
+body.page-news .site-header,
+body.page-resume .site-header {
     position: absolute;
     top: 0;
     inset-inline: 0; // span the layout; max-width + auto margins centre it

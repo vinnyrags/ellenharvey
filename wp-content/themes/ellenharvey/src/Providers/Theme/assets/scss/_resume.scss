@@ -1,146 +1,104 @@
 @use 'common/breakpoints' as *;
 
 // ==========================================================================
-// Résumé archive — credits grouped into sections.
+// Résumé page.
 //
-// Mirrors resume.htm: a credentials block under the heading, then each
-// section (Broadway, Off-Broadway, …) heads a three-column table of
-// production / role / venue. The original packed three ~125px columns into
-// the left panel; we keep that, dropping to a stacked layout on phones
-// where three columns can't breathe. Renders inside the dark content panel.
+// A normal block page (mirroring News): a full-bleed core/group whose
+// background is the photo, wrapping a core/columns — a left content column
+// (.resume-panel) and an empty right column the photo shows through.
+//
+// The panel and the credit tables are styled here, block-scoped so the same
+// look applies in the editor. The distinct text looks (gold section titles, the
+// gold lead line, fine print) are registered block style variants
+// (ThemeProvider::registerBlockStyles) — selectable from each block's Styles
+// panel and reusable anywhere — styled as `.is-style-*` at the bottom.
+//
+// Pulled into both theme.css (index.scss) and the editor stylesheet
+// (features/editor.scss).
 // ==========================================================================
 
-// The original résumé is set entirely in Verdana — gold headings (h2) and
-// white credit/detail text (h3) — with only the "resume" h1 in Arial. Default
-// the whole block to Verdana; the h1 keeps Arial from its own element style.
-.resume {
+.resume-panel {
+    box-sizing: border-box;
+    // Dark scrim keeps the long list readable over the photo.
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: var(--wp--preset--spacing--40) var(--wp--preset--spacing--40)
+        var(--wp--preset--spacing--50);
+    color: var(--wp--preset--color--white);
+    // The original résumé is set in Verdana.
     font-family: var(--wp--preset--font-family--verdana);
 
-    // Gold section + detail headings render uppercase, as in the original
-    // (which typed them in caps). The download links below are <p>, not <h2>,
-    // so they keep their natural casing.
+    // "Resume" — the dotted-rule page heading (Arial, as elsewhere).
+    h1 {
+        margin: 0;
+        padding-bottom: 0.3125rem; // 5px
+        border-bottom: 1px dotted var(--wp--preset--color--rule-gray);
+        letter-spacing: 0.02em;
+        font-family: var(--wp--preset--font-family--arial);
+    }
+
+    // Section headings carry extra space above; the gold/uppercase look comes
+    // from the "Section" style variant (.is-style-section).
     h2 {
-        text-transform: uppercase;
+        margin-block-start: var(--wp--preset--spacing--40);
+        margin-block-end: 0;
+    }
+
+    // Credit tables — three columns: production / role / venue.
+    .wp-block-table {
+        margin-block-start: var(--wp--preset--spacing--20);
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            line-height: 1.4;
+        }
+
+        td {
+            vertical-align: top;
+            text-align: start;
+            font-weight: 400;
+            padding: 0 0.75rem 0 0;
+            border: 0;
+            color: var(--wp--preset--color--white);
+        }
+
+        // Production column — wider, uppercase like the original.
+        td:first-child {
+            width: 42%;
+            text-transform: uppercase;
+        }
+
+        td:nth-child(2),
+        td:nth-child(3) {
+            width: 29%;
+        }
+
+        td:last-child {
+            padding-inline-end: 0;
+        }
+
+        // The director note — italic grey, on its own line in the production
+        // cell (e.g. "(dir: Tina Landau)").
+        em {
+            font-style: italic;
+            color: var(--wp--preset--color--rule-gray);
+        }
     }
 }
 
-// Union line — a gold heading in the original (an <h2> there).
-.resume__unions {
-    margin: 0;
-    margin-block-start: var(--wp--preset--spacing--20);
-    font-size: var(--wp--preset--font-size--large); // 18px
+// --- Block style variants (register_block_style) — reusable across pages -----
+// Look only (colour / case); font size is left to each block's typography
+// (Size) dropdown, never baked in here.
+
+// core/heading · "Section": gold uppercase section title.
+.is-style-section {
+    font-weight: 400;
     color: var(--wp--preset--color--gold);
+    text-transform: uppercase;
 }
 
-// Eyes / hair / vocal range — one small white line beneath the union heading.
-.resume__stats {
-    margin: 0;
-    margin-block-start: var(--wp--preset--spacing--20);
-    font-size: var(--wp--preset--font-size--small);
-    line-height: 1.5;
-}
-
-.resume__section {
-    margin-block-start: var(--wp--preset--spacing--40);
-}
-
-.resume__credits {
-    width: 100%;
-    margin-block-start: var(--wp--preset--spacing--20);
-    border-collapse: separate;
-    border-spacing: 0;
-    font-size: var(--wp--preset--font-size--small);
-    line-height: 1.4;
-
-    th,
-    td {
-        vertical-align: top;
-        text-align: start;
-        font-weight: 400;
-        padding-inline-end: 0.75rem;
-        color: var(--wp--preset--color--white);
-    }
-
-    td:last-child {
-        padding-inline-end: 0;
-    }
-}
-
-// Production column carries the most weight: a touch wider, never wrapping
-// the role/venue columns to nothing.
-.resume__production {
-    width: 42%;
-    text-transform: uppercase; // production titles are set in caps in the original
-}
-
-.resume__role,
-.resume__venue {
-    width: 29%;
-}
-
-.resume__note {
-    display: block;
-    text-transform: none; // director notes stay mixed-case, e.g. "(dir. Susan Stroman)"
-    font-style: italic;
-    color: var(--wp--preset--color--rule-gray);
-}
-
-// The "Commercial list upon request…" line is an <h2> in the original, set like
-// the other gold section titles — so it inherits the résumé's gold h2 styling
-// (uppercase via `.resume h2`); only the spacing above it is bespoke.
-.resume__footer-note {
-    margin-block-start: var(--wp--preset--spacing--40);
-}
-
-.resume__detail {
-    margin-block-start: var(--wp--preset--spacing--30);
-    font-size: var(--wp--preset--font-size--small);
-
-    p {
-        margin-block-start: var(--wp--preset--spacing--10);
-        text-align: start;
-    }
-}
-
-.resume__downloads {
-    margin-block-start: var(--wp--preset--spacing--40);
-    display: flex;
-    flex-direction: column;
-    gap: var(--wp--preset--spacing--20);
-    font-size: var(--wp--preset--font-size--large); // original set these as h2-sized links
-}
-
-// The "Download PDF" link and the "Download Headshots:" label share the look.
-.resume__download {
-    font-size: var(--wp--preset--font-size--large);
-}
-
-.resume__headshots {
-    display: flex;
-    flex-direction: column;
-    gap: var(--wp--preset--spacing--10);
-}
-
-// Three headshot thumbnails in a row, each linking to the full-size image —
-// portrait crops kept at ~150px tall like the original.
-.resume__headshots-thumbs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--wp--preset--spacing--20);
-
-    img {
-        display: block;
-        height: 150px;
-        width: auto;
-    }
-}
-
-// Phones: keep the three-column production / role / venue shape (don't stack);
-// just tighten the inter-column gap so the columns stay readable on a narrow
-// screen.
-@include media-down(sm) {
-    .resume__credits th,
-    .resume__credits td {
-        padding-inline-end: 0.4rem;
-    }
+// core/paragraph · "Lead": the gold credential / lead line.
+.is-style-lead {
+    color: var(--wp--preset--color--gold);
 }

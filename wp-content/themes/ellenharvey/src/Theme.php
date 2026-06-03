@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EllenHarvey;
 
-use EllenHarvey\Providers\Credit\CreditProvider;
 use EllenHarvey\Providers\Gallery\GalleryProvider;
 use EllenHarvey\Providers\Review\ReviewProvider;
 use EllenHarvey\Providers\Theme\ThemeProvider;
@@ -23,7 +22,6 @@ class Theme extends BaseTheme
      */
     protected array $providers = [
         ThemeProvider::class,
-        CreditProvider::class,
         ReviewProvider::class,
         GalleryProvider::class,
     ];

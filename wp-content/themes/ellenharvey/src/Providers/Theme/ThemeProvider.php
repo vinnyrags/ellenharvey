@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace EllenHarvey\Providers\Theme;
 
 use DI\Container;
-use EllenHarvey\Providers\Credit\CreditPost;
 use EllenHarvey\Providers\Gallery\GalleryPost;
 use EllenHarvey\Providers\Review\ReviewPost;
 use IX\Providers\Theme\ThemeProvider as BaseThemeProvider;
@@ -58,10 +57,27 @@ class ThemeProvider extends BaseThemeProvider
             return array_values(array_diff($blocks, ['core/pullquote', 'core/social-links', 'core/social-link']));
         });
 
+        add_action('init', [$this, 'registerBlockStyles']);
+
         parent::register();
 
         // Load/save this provider's ACF JSON (the Page Layout field group).
         $this->acfManager->registerSavePath();
+    }
+
+    /**
+     * Register block style variants for the résumé (and reusable elsewhere).
+     *
+     * Selectable from each block's Styles panel; styled as `.is-style-{name}`
+     * in _resume.scss (theme.css + the editor stylesheet). Look only — font size
+     * stays in each block's typography (Size) dropdown.
+     *  - core/heading "Section" — gold uppercase section titles.
+     *  - core/paragraph "Lead"  — the gold credential / lead line.
+     */
+    public function registerBlockStyles(): void
+    {
+        register_block_style('core/heading', ['name' => 'section', 'label' => __('Section', 'ellenharvey')]);
+        register_block_style('core/paragraph', ['name' => 'lead', 'label' => __('Lead', 'ellenharvey')]);
     }
 
     /**
@@ -79,7 +95,6 @@ class ThemeProvider extends BaseThemeProvider
         $classMap = parent::registerClassMap($classMap);
 
         $classMap[ReviewPost::POST_TYPE]  = ReviewPost::class;
-        $classMap[CreditPost::POST_TYPE]  = CreditPost::class;
         $classMap[GalleryPost::POST_TYPE] = GalleryPost::class;
 
         return $classMap;

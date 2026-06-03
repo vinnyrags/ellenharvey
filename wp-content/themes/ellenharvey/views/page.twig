@@ -13,7 +13,7 @@
    details from wp-admin. #}
 
 {% block main %}
-    {% if post.meta('overlay_header') or post.slug == 'news' %}
+    {% if post.meta('overlay_header') or post.slug in ['news', 'resume'] %}
         {{ post.content }}
     {% else %}
         <div class="site-content">
