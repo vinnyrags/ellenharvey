@@ -8,10 +8,9 @@
     {{ function('wp_body_open') }}
     <a class="skip-link screen-reader-text" href="#wp--skip-link--target">{{ _e('Skip to content') }}</a>
 
-    {# Two-column frame: dark content panel (left) + photographic column with
-       wordmark + nav (right). front-page overrides this with its own header
-       block for the full-width home treatment. Collapses to a single column
-       on mobile (see _layout.scss). #}
+    {# The stage: a 1000px centred column with the header overlaid on top (see
+       layout/_frame.scss). Each page's own block content provides the rest — a
+       core/group with a background photo wrapping a content panel column. #}
     <div class="site-layout">
         {% block header %}
             {% include 'header.twig' %}
@@ -19,11 +18,7 @@
 
         <main id="wp--skip-link--target" class="site-main">
             {% block main %}
-                <div class="site-content">
-                    {% block content %}
-                        {{ post.content }}
-                    {% endblock %}
-                </div>
+                {{ post.content }}
             {% endblock %}
         </main>
     </div>

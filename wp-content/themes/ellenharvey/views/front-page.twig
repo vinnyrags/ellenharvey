@@ -1,14 +1,6 @@
 {% extends "base.twig" %}
 
-{# Home uses the standard header (header.twig — logo + nav, both right-aligned);
-   _home.scss simply overlays it on the full-bleed hero. The hero photo and the
-   crossfading press pull-quotes are CMS-managed: the Home page content is a
-   core/group (its background image is the hero) wrapping an ix/content-slider
-   (transition: fade) full of core/pullquote blocks. #}
-
-{# `main` is the content *inside* base.twig's <main class="site-main"> — don't
-   reopen another <main> here (that nests them and duplicates the skip-link id).
-   On home the base panel's dark scrim is reset to transparent in _home.scss. #}
-{% block main %}
-    {{ post.content }}
-{% endblock %}
+{# The home page is just another page on the stage — its block content is a
+   core/group (background hero photo) wrapping an ix/content-slider of
+   crossfading press pull-quotes, vertically centred. base.twig renders it;
+   the slider styling lives in _press-quotes.scss. #}

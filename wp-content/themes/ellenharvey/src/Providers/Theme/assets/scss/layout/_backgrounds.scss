@@ -22,22 +22,13 @@ body {
     background-color: #000;
     background-repeat: no-repeat;
     background-position: center top;
-    // Default to plain black; each route sets its own photo below. Overlay /
-    // block-background pages (Home, News) keep their photo on a Group block, so
-    // they intentionally have no body photo.
+    // Plain black. Every regular page now carries its photo on a Group block
+    // (the hero), so the only route that still needs a body photo is the Photos
+    // CPT archive below.
 }
 
-// Static pages (slug classes via ThemeProvider::addPageSlugBodyClass)
-body.page-media {
-    background-image: url('#{$img}/back_media.jpg');
-}
-
-body.page-contact {
-    background-image: url('#{$img}/back_contact1.jpg');
-}
-
-// CPT archives (Résumé + Reviews are now block pages with a Group-block
-// background; only the Photos gallery remains a CPT archive)
+// The Photos gallery is the last CPT archive (not a block page), so it keeps its
+// photographic body background.
 body.post-type-archive-gallery {
     background-image: url('#{$img}/back_photos.jpg');
 }

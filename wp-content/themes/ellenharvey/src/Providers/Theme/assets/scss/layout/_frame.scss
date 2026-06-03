@@ -1,20 +1,25 @@
 @use 'common/breakpoints' as *;
 
 // ==========================================================================
-// Frame — the two-column layout that defines the site.
+// The stage.
 //
-// Desktop (faithful to the original): a 1000px centered stage. The left
-// ~485px is a dark, semi-transparent content panel (white text); the right
-// column lets the page's photographic background show through, with the
-// wordmark + nav anchored at its top.
-//
-// Mobile: the columns stack. Wordmark + nav ride at the top, the content
-// panel sits below, and the photographic background stays fixed behind —
-// a clean adaptation the original (desktop-only, fixed 1000px) never had.
+// The original site was a fixed 1000px centred "stage" — a dark content panel
+// over a photo of Ellen. That whole design now lives in each page's *block
+// content*: a core/group with the photo as its background, wrapping a content
+// panel column whose min-height is set on the block. So the theme no longer
+// ships the frame itself — it just centres the 1000px stage and overlays the
+// header. A page is whatever its blocks are; the home page is simply one whose
+// group centres a quote slider.
 // ==========================================================================
 
 $stage-width: 1000px;
-$panel-width: 485px;
+
+// Height of the overlaid header — inner pages clear it by this much. IX leaves
+// the header offset to child themes (see IX common/_layout.scss), so we set the
+// value here on IX's `--ix-*` consumer-token convention.
+:root {
+    --ix-header-height: 6rem;
+}
 
 html {
     overflow-y: scroll;
@@ -25,54 +30,37 @@ body {
 }
 
 .site-layout {
+    position: relative; // positioning context for the overlaid header
     width: 100%;
     max-width: $stage-width;
     margin-inline: auto;
     min-height: 100vh;
-
-    @include media(lg) {
-        display: grid;
-        grid-template-columns: $panel-width 1fr;
-        grid-template-areas: 'main header';
-        align-items: start;
-        column-gap: 0;
-    }
 }
 
-// --- Content panel (left on desktop) ---------------------------------------
-
-.site-main {
-    grid-area: main;
-    // Mobile (stacked, no columns): a flat dark scrim keeps the white text
-    // readable over the full-bleed photo. This is our phone adaptation; the
-    // original was desktop-only.
-    background-color: rgba(0, 0, 0, 0.78);
-    padding: var(--wp--preset--spacing--40) var(--wp--preset--spacing--40)
-        var(--wp--preset--spacing--50);
-
-    @include media(lg) {
-        min-height: 100vh;
-        padding: 6.25rem 2.5rem 2.5rem; // 100px top / 40px sides — matches original #leftcontent
-
-        // Desktop two-column: swap the flat scrim for the original #left tile —
-        // a feathered, ~14%-opacity dark overlay (back_content.png, 485px wide =
-        // the panel width) repeated down the column. The photographic body
-        // background bleeds through it, and the tile's transparent edges soften
-        // the seam where the panel meets the open photo, exactly as the original.
-        background-color: transparent;
-        background-image: url('../../src/Providers/Theme/assets/images/back_content.png');
-        background-repeat: repeat-y;
-        background-position: center top;
-    }
+// The header overlays the top of the stage on every page (logo + nav alignment
+// in _header.scss); the page's hero photo sits flush to the top behind it.
+.site-header {
+    position: absolute;
+    top: 0;
+    inset-inline: 0;
+    z-index: 2;
 }
 
-.site-content {
-    // Long-form measure stays readable inside the narrow panel.
-    max-width: 60ch;
+// The page's top-level group is the photo hero. Its height comes from the
+// columns inside (their Min-height is set on the block), so the photo fills the
+// viewport; a small side gutter keeps the content panel off the stage edges.
+.site-main > .wp-block-group {
+    padding-block: 0;
+    padding-inline: var(--wp--preset--spacing--40);
 }
 
-// --- Footer landmark (visually inert; credits live on Contact) -------------
+// Content pages are top-aligned, so they drop below the overlaid header. The
+// home page centres its slider instead and keeps the photo flush to the top.
+body:not(.home) .site-main > .wp-block-group {
+    padding-block-start: var(--ix-header-height);
+}
 
+// Footer landmark (visually inert; credits live on the Contact page).
 .site-footer {
     min-height: 0;
 }

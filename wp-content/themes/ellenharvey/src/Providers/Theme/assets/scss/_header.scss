@@ -4,13 +4,11 @@
 // Site header — name wordmark + primary nav.
 //
 // A simple container of two items — the logo and the nav — both right-aligned
-// at every viewport. On inner pages it sits in the right photographic column;
-// on home _home.scss overlays this same header on the hero. No per-page or
-// per-breakpoint variants.
+// at every viewport. It's overlaid on the top of every page's hero (positioned
+// in layout/_frame.scss). No per-page or per-breakpoint variants.
 // ==========================================================================
 
 .site-header {
-    grid-area: header;
     display: flex;
     flex-direction: column;
     padding: var(--wp--preset--spacing--30) var(--wp--preset--spacing--40);

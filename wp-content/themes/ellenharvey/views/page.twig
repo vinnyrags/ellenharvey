@@ -1,28 +1,6 @@
 {% extends "base.twig" %}
 
-{# Static pages (News, Media, Contact).
-
-   Full-bleed pages render their own group/columns layout — like the home page —
-   so the background photo can live on a block instead of the body, and the
-   editor shows it. Their heading lives in the content. News always uses this
-   (its photo is a Group-block background); any other page can opt in via the
-   "Overlay Header" toggle.
-
-   The rest keep the standard dotted-rule h1 + dark content panel; the body is
-   editor content, so Ellen can update News, swap Media embeds, or edit Contact
-   details from wp-admin. #}
-
-{% block main %}
-    {% if post.meta('overlay_header') or post.slug in ['news', 'resume', 'reviews'] %}
-        {{ post.content }}
-    {% else %}
-        <div class="site-content">
-            <article class="page">
-                <h1>{{ post.title }}</h1>
-                <div class="page__content">
-                    {{ post.content }}
-                </div>
-            </article>
-        </div>
-    {% endif %}
-{% endblock %}
+{# Every page renders its own block content on the stage (base.twig /
+   layout/_frame.scss): a core/group with a background photo wrapping a content
+   panel column. There's no page-specific chrome — the design lives in the
+   blocks, so Ellen edits each page's look in the editor. #}

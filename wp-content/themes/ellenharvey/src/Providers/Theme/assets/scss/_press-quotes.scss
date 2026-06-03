@@ -2,12 +2,11 @@
 // Press-quote slider — shared by the front end (homepage hero) and the block
 // editor, so editing the quotes looks like the rendered page.
 //
-// Scoped to the ix/content-slider block (the only place these quotes live)
-// rather than the page's body.overlay-header class, so the exact same rules
-// apply inside the editor canvas — where there is no body class to hang them
-// on. _home.scss owns the page LAYOUT (full-bleed hero, columns); this owns the
-// quote CARD and the pull-quote typography. The editor stylesheet
-// (features/editor.scss) pulls this in too.
+// Scoped to the ix/content-slider block (the only place these quotes live) so
+// the exact same rules apply inside the editor canvas. layout/_frame.scss owns
+// the page LAYOUT (the stage + hero); this owns the quote CARD and the
+// pull-quote typography. The editor stylesheet (features/editor.scss) pulls
+// this in too.
 // ==========================================================================
 
 :root {

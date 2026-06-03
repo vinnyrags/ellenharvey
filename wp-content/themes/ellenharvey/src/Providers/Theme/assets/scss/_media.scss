@@ -1,15 +1,15 @@
 @use 'common/breakpoints' as *;
 
 // ==========================================================================
-// Static pages (News, Media, Contact).
+// Media page.
 //
-// Editor content rendered inside the dark content panel. The original built
-// these with fixed 450px embeds; we keep the look but make media fluid so it
-// never overflows the panel and adapts on phones.
+// The content panel is a list of clips — Vimeo/YouTube embeds, a self-hosted
+// video, and audio players. Keep them fluid so they fill the panel and never
+// overflow. Scoped to the .media-panel column so the same look applies in the
+// block editor.
 // ==========================================================================
 
-.page__content {
-    // Media (the Media page): embeds, video, audio all fill the panel.
+.media-panel {
     .wp-block-embed__wrapper,
     .wp-block-video,
     .wp-block-audio {
@@ -42,14 +42,9 @@
         }
     }
 
-    // Headings between media items carry the section label (gold h2) — give
-    // them a touch more air than the typography default so the page reads as
-    // a list of clips.
+    // A touch more air above each clip's gold section heading so the page reads
+    // as a list of clips.
     h2 {
         margin-block-start: var(--wp--preset--spacing--40);
     }
 }
-
-// The News page now renders as a full-bleed group/columns layout (mirroring the
-// home page) — its panel, gold copy and social row live in _news.scss, scoped to
-// the .news-panel column so the same look applies in the block editor.

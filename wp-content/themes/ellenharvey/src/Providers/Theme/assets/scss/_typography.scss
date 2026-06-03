@@ -34,8 +34,7 @@
     }
 
     // First child of the panel shouldn't push down from the panel top.
-    > :first-child,
-    .site-content > :first-child {
+    > :first-child {
         margin-block-start: 0;
     }
 }

@@ -44,7 +44,6 @@ class ThemeProvider extends BaseThemeProvider
         add_action('wp_enqueue_scripts', [$this, 'enqueueAssets']);
         add_action('after_setup_theme', [$this, 'registerMenus']);
         add_filter('body_class', [$this, 'addPageSlugBodyClass']);
-        add_filter('body_class', [$this, 'addOverlayHeaderBodyClass']);
 
         // Hide the front-end admin bar for everyone.
         add_filter('show_admin_bar', '__return_false');
@@ -61,6 +60,21 @@ class ThemeProvider extends BaseThemeProvider
                 'core/quote',
             ]));
         });
+
+        // core/columns ships without dimensions support, so it has no
+        // Min-height control. Add it so each hero's full-viewport column height
+        // is a block setting (visible/editable in the editor) instead of a
+        // hard-coded theme CSS rule.
+        add_filter('register_block_type_args', static function (array $args, string $name): array {
+            if ($name === 'core/columns') {
+                $args['supports']['dimensions'] = array_merge(
+                    $args['supports']['dimensions'] ?? [],
+                    ['minHeight' => true],
+                );
+            }
+
+            return $args;
+        }, 10, 2);
 
         add_action('init', [$this, 'registerBlockStyles']);
 
@@ -161,27 +175,6 @@ class ThemeProvider extends BaseThemeProvider
             if ($post instanceof \WP_Post && $post->post_name !== '') {
                 $classes[] = 'page-' . $post->post_name;
             }
-        }
-
-        return $classes;
-    }
-
-    /**
-     * Add an `overlay-header` body class when the "Overlay Header" toggle is on.
-     *
-     * This controls one thing: laying the header over the page content (see
-     * _home.scss). It's a pure opt-in — the home page uses it. The full-bleed
-     * layout itself is separate (driven by `body.overlay-header` OR
-     * `body.page-news`), so News can be full-bleed without overlaying the header.
-     *
-     * @param string[] $classes
-     * @return string[]
-     */
-    public function addOverlayHeaderBodyClass(array $classes): array
-    {
-        $id = get_queried_object_id();
-        if ($id && function_exists('get_field') && get_field('overlay_header', $id)) {
-            $classes[] = 'overlay-header';
         }
 
         return $classes;
