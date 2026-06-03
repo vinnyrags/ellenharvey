@@ -17,7 +17,8 @@
 // Group-block background photo.
 body.overlay-header,
 body.page-news,
-body.page-resume {
+body.page-resume,
+body.page-reviews {
     .site-layout {
         display: block;
         position: relative;
@@ -63,7 +64,8 @@ body.page-resume {
 // padding too, so the photo stays flush with the top of the page while the
 // content reads below the header.
 body.page-news .site-main > .wp-block-group,
-body.page-resume .site-main > .wp-block-group {
+body.page-resume .site-main > .wp-block-group,
+body.page-reviews .site-main > .wp-block-group {
     padding-block-start: 6rem; // ≈ the header height
 }
 
@@ -76,7 +78,8 @@ body.page-resume .site-main > .wp-block-group {
 // _header.scss.
 body.overlay-header .site-header,
 body.page-news .site-header,
-body.page-resume .site-header {
+body.page-resume .site-header,
+body.page-reviews .site-header {
     position: absolute;
     top: 0;
     inset-inline: 0; // span the layout; max-width + auto margins centre it

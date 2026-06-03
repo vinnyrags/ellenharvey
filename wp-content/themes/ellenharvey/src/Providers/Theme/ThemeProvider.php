@@ -6,7 +6,6 @@ namespace EllenHarvey\Providers\Theme;
 
 use DI\Container;
 use EllenHarvey\Providers\Gallery\GalleryPost;
-use EllenHarvey\Providers\Review\ReviewPost;
 use IX\Providers\Theme\ThemeProvider as BaseThemeProvider;
 use IX\Services\IconServiceFactory;
 
@@ -53,8 +52,14 @@ class ThemeProvider extends BaseThemeProvider
         // Re-enable core blocks IX disables by default (DisableBlocks feature):
         // - core/pullquote powers the homepage press-quote slider.
         // - core/social-links powers the News page's follow row.
+        // - core/quote powers the Reviews page press quotes.
         add_filter('theme/disabled_block_types', static function (array $blocks): array {
-            return array_values(array_diff($blocks, ['core/pullquote', 'core/social-links', 'core/social-link']));
+            return array_values(array_diff($blocks, [
+                'core/pullquote',
+                'core/social-links',
+                'core/social-link',
+                'core/quote',
+            ]));
         });
 
         add_action('init', [$this, 'registerBlockStyles']);
@@ -75,6 +80,8 @@ class ThemeProvider extends BaseThemeProvider
      *  - core/heading "Underline" — dotted rule beneath the heading.
      *  - core/paragraph "Lead"    — the gold credential / lead line.
      *  - core/table "Plain"       — borderless rows for clean lists.
+     *  - core/quote "Press quote" — a press pull-quote (straight-quoted text +
+     *    italic, dash-prefixed source; no default rule).
      */
     public function registerBlockStyles(): void
     {
@@ -82,6 +89,7 @@ class ThemeProvider extends BaseThemeProvider
         register_block_style('core/heading', ['name' => 'underline', 'label' => __('Underline', 'ellenharvey')]);
         register_block_style('core/paragraph', ['name' => 'lead', 'label' => __('Lead', 'ellenharvey')]);
         register_block_style('core/table', ['name' => 'plain', 'label' => __('Plain', 'ellenharvey')]);
+        register_block_style('core/quote', ['name' => 'press', 'label' => __('Press quote', 'ellenharvey')]);
     }
 
     /**
@@ -98,7 +106,6 @@ class ThemeProvider extends BaseThemeProvider
     {
         $classMap = parent::registerClassMap($classMap);
 
-        $classMap[ReviewPost::POST_TYPE]  = ReviewPost::class;
         $classMap[GalleryPost::POST_TYPE] = GalleryPost::class;
 
         return $classMap;

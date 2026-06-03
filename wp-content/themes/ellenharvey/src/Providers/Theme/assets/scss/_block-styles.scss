@@ -2,13 +2,14 @@
 // Reusable block style variants (register_block_style in ThemeProvider).
 //
 // Selectable from each block's Styles panel and usable on any page — so they
-// live here, not in a one-off page file. Look only (colour / case); font size,
-// spacing, borders and the rest stay in each block's own controls / theme.json.
-// Loaded into both theme.css (index.scss) and the editor (features/editor.scss).
+// live here, not in a one-off page file. Each variant is a complete preset
+// (colour, case, size, rules); applying it gives the full look. Loaded into both
+// theme.css (index.scss) and the editor (features/editor.scss).
 // ==========================================================================
 
 // core/heading · "Section": gold uppercase section title.
 .is-style-section {
+    font-size: var(--wp--preset--font-size--large); // 18px
     font-weight: 400;
     color: var(--wp--preset--color--gold);
     text-transform: uppercase;
@@ -16,11 +17,13 @@
 
 // core/paragraph · "Lead": the gold credential / lead line.
 .is-style-lead {
+    font-size: var(--wp--preset--font-size--large); // 18px
     color: var(--wp--preset--color--gold);
 }
 
-// core/heading · "Underline": a dotted rule beneath the heading (page titles).
+// core/heading · "Underline": page title with a dotted rule beneath it.
 .is-style-underline {
+    font-size: var(--wp--preset--font-size--x-large); // 22px
     padding-bottom: 0.3125rem; // 5px
     border-bottom: 1px dotted var(--wp--preset--color--rule-gray);
 }
@@ -42,5 +45,36 @@
     td:last-child,
     th:last-child {
         padding-inline-end: 0;
+    }
+}
+
+// core/quote · "Press quote": a press pull-quote — straight-quoted text with an
+// italic, dash-prefixed source; no default rule or indent.
+.wp-block-quote.is-style-press {
+    margin-block-start: var(--wp--preset--spacing--30);
+    padding: 0;
+    border: 0;
+
+    p {
+        margin: 0;
+        text-align: justify;
+
+        &::before {
+            content: '\0022';
+        }
+
+        &::after {
+            content: '\0022';
+        }
+    }
+
+    cite {
+        display: block;
+        margin-block-start: 0.25rem;
+        font-style: italic;
+
+        &::before {
+            content: '-\00a0'; // hyphen + nbsp, matches the original "-Source"
+        }
     }
 }

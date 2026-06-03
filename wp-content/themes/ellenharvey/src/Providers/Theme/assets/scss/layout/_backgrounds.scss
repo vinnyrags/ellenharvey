@@ -36,15 +36,8 @@ body.page-contact {
     background-image: url('#{$img}/back_contact1.jpg');
 }
 
-// CPT archives
-body.post-type-archive-credit {
-    background-image: url('#{$img}/back_resume2.2.jpg');
-}
-
-body.post-type-archive-review {
-    background-image: url('#{$img}/back_reviews.jpg');
-}
-
+// CPT archives (Résumé + Reviews are now block pages with a Group-block
+// background; only the Photos gallery remains a CPT archive)
 body.post-type-archive-gallery {
     background-image: url('#{$img}/back_photos.jpg');
 }
