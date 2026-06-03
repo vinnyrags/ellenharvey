@@ -2,16 +2,18 @@
 
 {# Static pages (News, Media, Contact).
 
-   Overlay-header pages (News) render their own full-bleed group/columns layout
-   — like the home page — so the background photo can live on a block instead of
-   the body, and the editor shows it. Their heading lives in the content.
+   Full-bleed pages render their own group/columns layout — like the home page —
+   so the background photo can live on a block instead of the body, and the
+   editor shows it. Their heading lives in the content. News always uses this
+   (its photo is a Group-block background); any other page can opt in via the
+   "Overlay Header" toggle.
 
    The rest keep the standard dotted-rule h1 + dark content panel; the body is
    editor content, so Ellen can update News, swap Media embeds, or edit Contact
    details from wp-admin. #}
 
 {% block main %}
-    {% if post.meta('overlay_header') %}
+    {% if post.meta('overlay_header') or post.slug == 'news' %}
         {{ post.content }}
     {% else %}
         <div class="site-content">

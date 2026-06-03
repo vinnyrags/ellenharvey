@@ -141,12 +141,15 @@ class ThemeProvider extends BaseThemeProvider
     }
 
     /**
-     * Add an `overlay-header` body class when a page has the "Overlay Header"
-     * layout toggle on (the Page Layout ACF field group).
+     * Add an `overlay-header` body class to the full-bleed pages.
      *
-     * Drives the full-bleed-hero treatment in _home.scss: the header is laid
-     * over the top of a full-bleed Group-block background instead of sitting in
-     * the standard content frame. CMS-controlled, so any page can opt in.
+     * Drives the full-bleed treatment in _home.scss: the header is laid over a
+     * full-bleed Group-block background instead of sitting in the standard
+     * content frame. Two ways in:
+     *  - the opt-in "Overlay Header" toggle (Page Layout ACF group) — the home
+     *    page uses this;
+     *  - the News page, which always uses the block-background layout (its photo
+     *    is a Group-block background), independent of the toggle.
      *
      * @param string[] $classes
      * @return string[]
@@ -154,7 +157,9 @@ class ThemeProvider extends BaseThemeProvider
     public function addOverlayHeaderBodyClass(array $classes): array
     {
         $id = get_queried_object_id();
-        if ($id && function_exists('get_field') && get_field('overlay_header', $id)) {
+        $toggle = $id && function_exists('get_field') && get_field('overlay_header', $id);
+
+        if ($toggle || is_page('news')) {
             $classes[] = 'overlay-header';
         }
 
