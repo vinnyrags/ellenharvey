@@ -22,8 +22,9 @@ body {
     background-color: #000;
     background-repeat: no-repeat;
     background-position: center top;
-    // Sensible default until a more specific route rule below matches.
-    background-image: url('#{$img}/back_home.jpg');
+    // Default to plain black; each route sets its own photo below. Overlay /
+    // block-background pages (Home, News) keep their photo on a Group block, so
+    // they intentionally have no body photo.
 }
 
 // Static pages (slug classes via ThemeProvider::addPageSlugBodyClass)
@@ -46,11 +47,4 @@ body.post-type-archive-review {
 
 body.post-type-archive-gallery {
     background-image: url('#{$img}/back_photos.jpg');
-}
-
-// Keep last: overlay-header pages (Home, News) carry their photo on a Group
-// block background (editable in the block editor), so the body stays black
-// behind it — winning over the slug rules above via source order.
-body.overlay-header {
-    background-image: none;
 }
