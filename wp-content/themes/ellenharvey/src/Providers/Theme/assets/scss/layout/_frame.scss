@@ -37,9 +37,12 @@ body {
     min-height: 100vh;
 }
 
-// The header overlays the top of the stage on every page (logo + nav alignment
-// in _header.scss); the page's hero photo sits flush to the top behind it.
-.site-header {
+// By default the header sits in normal document flow above the page content
+// (logo + nav alignment in _header.scss). The overlay treatment — header
+// floating over the page's hero photo — is opt-in per page via the
+// "Overlay header" toggle (Page Layout field group), which emits the
+// has-overlay-header body class (ThemeProvider::addPageSlugBodyClass).
+body.has-overlay-header .site-header {
     position: absolute;
     top: 0;
     inset-inline: 0;
@@ -54,10 +57,26 @@ body {
     padding-inline: var(--wp--preset--spacing--40);
 }
 
-// Content pages are top-aligned, so they drop below the overlaid header. The
-// home page centres its slider instead and keeps the photo flush to the top.
-body:not(.home) .site-main > .wp-block-group {
+// Overlay pages need their top-aligned content to drop below the floating
+// header (in normal flow there is nothing to clear, so no padding). The home
+// page is the exception even when overlaid — it centres its slider and keeps
+// the photo flush to the top.
+body.has-overlay-header:not(.home) .site-main > .wp-block-group {
     padding-block-start: var(--ix-header-height);
+}
+
+// Full-bleed hero — opt-in via the "full-bleed-hero" class on a hero Group
+// (set in the editor's Advanced → Additional CSS class). The stage caps the
+// page at 1000px (.site-layout), which would box a hero photo's background
+// and crop the feathered side edges of the image. This breaks the Group out
+// to the full viewport width so its background paints edge-to-edge at natural
+// size — the original site's look, where the 1440px photo fades into black on
+// either side. Inner content (the quote slider) still centres via the Group's
+// constrained layout.
+.full-bleed-hero {
+    width: 100vw;
+    max-width: 100vw;
+    margin-inline: calc(50% - 50vw);
 }
 
 // Footer landmark (visually inert; credits live on the Contact page).

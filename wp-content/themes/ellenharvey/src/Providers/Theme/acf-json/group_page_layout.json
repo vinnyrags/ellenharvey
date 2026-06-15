@@ -1,0 +1,32 @@
+{
+    "key": "group_page_layout",
+    "title": "Page Layout",
+    "fields": [
+        {
+            "key": "field_page_layout_overlay_header",
+            "label": "Overlay header",
+            "name": "overlay_header",
+            "type": "true_false",
+            "instructions": "When on, the site header floats over the top of this page's first section (the photo hero) instead of sitting above it in the normal page flow. Off by default.",
+            "required": 0,
+            "ui": 1,
+            "default_value": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "page"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "side",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "active": true,
+    "description": "Per-page layout switches. Lives in the Theme provider's acf-json."
+}

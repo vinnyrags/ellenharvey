@@ -165,6 +165,12 @@ class ThemeProvider extends BaseThemeProvider
      * a slug-based class lets the SCSS map backgrounds stably across
      * local / staging / production.
      *
+     * Also emits `has-overlay-header` when the page's "Overlay header"
+     * toggle (Page Layout field group, Theme acf-json) is on. The header
+     * is absolutely positioned over the page's first section ONLY under
+     * this class — the default is normal document flow. See
+     * layout/_frame.scss.
+     *
      * @param string[] $classes
      * @return string[]
      */
@@ -174,6 +180,10 @@ class ThemeProvider extends BaseThemeProvider
             $post = get_queried_object();
             if ($post instanceof \WP_Post && $post->post_name !== '') {
                 $classes[] = 'page-' . $post->post_name;
+            }
+
+            if ($post instanceof \WP_Post && function_exists('get_field') && get_field('overlay_header', $post->ID)) {
+                $classes[] = 'has-overlay-header';
             }
         }
 

@@ -14,9 +14,10 @@
 
 .news-panel {
     box-sizing: border-box;
-    // Dark scrim keeps the copy readable over the photo — the original ran this
-    // text over its feathered #left content tile.
-    background-color: rgba(0, 0, 0, 0.55);
+    // No background here — the panel fill is CMS-owned: the News page's
+    // column block sets the "Panel Haze" color preset (theme.json) as its
+    // block background, the same fill the nav and homepage slider use via
+    // --eh-panel-scrim.
     padding: var(--wp--preset--spacing--40) var(--wp--preset--spacing--40)
         var(--wp--preset--spacing--50);
     color: var(--wp--preset--color--white);

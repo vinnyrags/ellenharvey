@@ -11,9 +11,11 @@
 
 :root {
     // Translucent dark panel fill — the original's back_content.png tile fill.
-    // Reused behind the primary nav (_header) and this quote slider. Change it
-    // once here to update both.
-    --eh-panel-scrim: rgba(54, 54, 54, 0.15);
+    // Reused behind the primary nav (_header) and this quote slider. The value
+    // lives in theme.json as the "Panel Haze" color preset so the SAME fill is
+    // selectable in the editor (the News page content column sets it as its
+    // block background). Change it once in theme.json to update everything.
+    --eh-panel-scrim: var(--wp--preset--color--haze);
 }
 
 // The slider "card": a translucent panel holding the rotating quotes, sized and
