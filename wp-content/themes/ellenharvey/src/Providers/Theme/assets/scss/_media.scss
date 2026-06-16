@@ -10,10 +10,16 @@
 // ==========================================================================
 
 .media-panel {
-    .wp-block-embed__wrapper,
+    // Each clip's gold heading labels the media directly below it, so the
+    // two read as a pair — keep them close. --20 (8px) halves the default
+    // flow rhythm. Target .wp-block-embed (the figure) rather than its inner
+    // __wrapper so this actually overrides the block-gap for embeds, matching
+    // the self-hosted video + audio blocks (the __wrapper margin was inert on
+    // aspect-ratio embeds, whose iframe is absolutely positioned).
+    .wp-block-embed,
     .wp-block-video,
     .wp-block-audio {
-        margin-block-start: var(--wp--preset--spacing--30);
+        margin-block-start: var(--wp--preset--spacing--20);
     }
 
     iframe,
