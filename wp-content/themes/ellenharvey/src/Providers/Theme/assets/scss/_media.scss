@@ -41,10 +41,4 @@
             height: 100%;
         }
     }
-
-    // A touch more air above each clip's gold section heading so the page reads
-    // as a list of clips.
-    h2 {
-        margin-block-start: var(--wp--preset--spacing--40);
-    }
 }

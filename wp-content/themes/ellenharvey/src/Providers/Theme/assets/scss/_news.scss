@@ -41,9 +41,9 @@
         line-height: normal; // the original set none on this text
     }
 
-    a {
-        color: var(--wp--preset--color--gold);
-    }
+    // Links inherit the sitewide #FF9 (pale-yellow) from theme.json
+    // styles.elements.link — matching the original, where links were the
+    // lighter pale-yellow against the gold copy. (No per-panel override.)
 
     // Follow row — the original's small linked icons below the copy.
     .wp-block-social-links {

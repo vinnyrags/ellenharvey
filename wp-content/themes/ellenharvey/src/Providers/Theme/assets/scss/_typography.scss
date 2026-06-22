@@ -17,20 +17,24 @@
     }
 
     // Heading rhythm — vertical space lives on margin-block-start of the
-    // following heading, never margin-block-end (house rule).
-    h2 {
-        margin-block-start: var(--wp--preset--spacing--40);
+    // following element, never margin-block-end (house rule).
+    //   - Every non-h1 heading and paragraph: 16px (--30).
+    //   - The element right after the page title (h1): 40px (--50).
+    :is(h2, h3, h4, h5, h6),
+    p {
+        // No opinionated paragraph alignment — natural start alignment.
+        // (Components that want justify/center set it themselves.)
+        margin-block-start: var(--wp--preset--spacing--30);
     }
 
     h3 {
-        margin-block-start: var(--wp--preset--spacing--20);
         line-height: 1.4;
     }
 
-    p {
-        // No opinionated alignment — paragraphs use the natural start alignment.
-        // (Components that genuinely want justify/center set it themselves.)
-        margin-block-start: var(--wp--preset--spacing--40);
+    // 40px gap after the page title. Placed after the rule above so it wins
+    // the specificity tie for an element that directly follows the h1.
+    h1 + * {
+        margin-block-start: var(--wp--preset--spacing--50);
     }
 
     // First child of the panel shouldn't push down from the panel top.
