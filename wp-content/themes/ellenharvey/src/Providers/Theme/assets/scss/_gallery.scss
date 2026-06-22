@@ -8,45 +8,60 @@
 // photos.htm grid + lightbox, dependency-free.
 // ==========================================================================
 
+// Small fixed-size posters (105x150 — the natural source size) in a tight
+// grid, mirroring the original photos.htm table (3 across, ~10px gaps). The
+// grid is left-aligned and the posters are small, so Ellen's photo
+// (back_photos.jpg, the body background) shows to the right — the original look.
 .gallery-grid {
     margin: 0;
-    margin-block-start: var(--wp--preset--spacing--30);
+    margin-block-start: var(--wp--preset--spacing--40);
     padding: 0;
     list-style: none;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--wp--preset--spacing--30);
+    grid-template-columns: repeat(4, 105px);
+    gap: 10px;
+    justify-content: start;
+}
+
+.gallery-grid__item {
+    margin: 0;
 }
 
 .gallery-poster {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    width: 100%;
-    padding: 0.5rem;
+    display: block;
+    width: 105px;
+    padding: 0;
     background: none;
-    border: 1px solid transparent;
+    border: 0;
     color: inherit;
     cursor: pointer;
-    transition: border-color 0.2s ease, opacity 0.2s ease;
+    transition: opacity 0.2s ease;
 
     &:hover,
     &:focus-visible {
-        border-color: var(--wp--preset--color--rule-gray);
+        opacity: 0.8;
     }
 }
 
 .gallery-poster__image {
     display: block;
-    width: 100%;
-    height: auto;
+    width: 105px;
+    height: 150px;
+    object-fit: cover;
 }
 
+// The original shows no text labels — the poster art carries each title.
+// Keep the label for screen readers (the button also has an aria-label).
 .gallery-poster__label {
-    font-size: var(--wp--preset--font-size--small);
-    color: var(--wp--preset--color--white);
-    text-align: center;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 // --------------------------------------------------------------------------
