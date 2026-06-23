@@ -32,6 +32,15 @@ class ThemeProvider extends BaseThemeProvider
      */
     protected array $hooks = [];
 
+    /**
+     * Child blocks (merged additively with IX's parent blocks).
+     *
+     * @var array<string>
+     */
+    protected array $blocks = [
+        'photo-gallery',
+    ];
+
     public function __construct(
         Container $container,
         IconServiceFactory $iconFactory,
@@ -90,8 +99,8 @@ class ThemeProvider extends BaseThemeProvider
      * Selectable from each block's Styles panel; styled as `.is-style-{name}`
      * in _block-styles.scss (theme.css + the editor stylesheet). Each variant is
      * a complete preset including its font size.
-     *  - core/heading "Section"   — gold uppercase section titles.
-     *  - core/heading "Underline" — page title with a dotted rule beneath it.
+     *  - core/heading "Section"    — gold uppercase section titles.
+     *  - core/heading "Page Title" — the page <h1>: xx-large with a dotted rule.
      *  - core/paragraph "Lead"    — the gold credential / lead line.
      *  - core/table "Plain"       — borderless rows for clean lists.
      *  - core/quote "Press quote" — a press pull-quote (straight-quoted text +
@@ -100,7 +109,7 @@ class ThemeProvider extends BaseThemeProvider
     public function registerBlockStyles(): void
     {
         register_block_style('core/heading', ['name' => 'section', 'label' => __('Section', 'ellenharvey')]);
-        register_block_style('core/heading', ['name' => 'underline', 'label' => __('Underline', 'ellenharvey')]);
+        register_block_style('core/heading', ['name' => 'page-title', 'label' => __('Page Title', 'ellenharvey')]);
         register_block_style('core/paragraph', ['name' => 'lead', 'label' => __('Lead', 'ellenharvey')]);
         register_block_style('core/table', ['name' => 'plain', 'label' => __('Plain', 'ellenharvey')]);
         register_block_style('core/quote', ['name' => 'press', 'label' => __('Press quote', 'ellenharvey')]);
@@ -129,6 +138,31 @@ class ThemeProvider extends BaseThemeProvider
     {
         $this->enqueueStyle('ellenharvey-theme', 'theme.css');
         $this->enqueueScript('ellenharvey-theme', 'index.js');
+    }
+
+    /**
+     * Enqueue block-editor scripts.
+     *
+     * Keeps IX's parent-block editor scripts, then adds this theme's own
+     * block(s). The child build emits each block's editor bundle to
+     * dist/js/{block}.js; it's enqueued straight from the child dist here so
+     * Gutenberg registers the block (without it, the editor shows "block not
+     * supported"). Mirrors how IX enqueues its own blocks from the parent dist.
+     */
+    public function enqueueEditorAssets(): void
+    {
+        parent::enqueueEditorAssets();
+
+        $editorScript = get_stylesheet_directory() . '/dist/js/photo-gallery.js';
+        if (file_exists($editorScript)) {
+            wp_enqueue_script(
+                'ellenharvey-photo-gallery-block-editor',
+                get_stylesheet_directory_uri() . '/dist/js/photo-gallery.js',
+                ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-server-side-render'],
+                filemtime($editorScript),
+                true
+            );
+        }
     }
 
     /**

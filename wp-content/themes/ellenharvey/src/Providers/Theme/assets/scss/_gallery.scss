@@ -8,10 +8,31 @@
 // photos.htm grid + lightbox, dependency-free.
 // ==========================================================================
 
+// Photos page content panel — the left column of the page's hero (a core/group
+// carrying the back_contact.jpg block background, wrapping a two-column row).
+// Mirrors the News/Reviews/Resume panels: the ~492px column width and 24px
+// inset come from the columns layout + the group's gutter, so this only owns
+// the panel padding, text colour and the dotted-rule heading. The translucent
+// fill is CMS-owned (the column's "Panel Haze" background-color preset), exactly
+// like the other pages. Scoped to the class (not a page body) so it also applies
+// inside the block editor.
+.photos-panel {
+    box-sizing: border-box;
+    padding: var(--wp--preset--spacing--40) var(--wp--preset--spacing--40)
+        var(--wp--preset--spacing--50);
+    color: var(--wp--preset--color--white);
+
+    // Heading sits flush at the panel top; its dotted-rule look comes from the
+    // "Page Title" block style (.is-style-page-title) selected on the heading.
+    h1 {
+        margin: 0;
+    }
+}
+
 // Small fixed-size posters (105x150 — the natural source size) in a tight
 // grid, mirroring the original photos.htm table (3 across, ~10px gaps). The
 // grid is left-aligned and the posters are small, so Ellen's photo
-// (back_photos.jpg, the body background) shows to the right — the original look.
+// (the back_contact.jpg group block background) shows to the right — the original look.
 .gallery-grid {
     margin: 0;
     margin-block-start: var(--wp--preset--spacing--40);

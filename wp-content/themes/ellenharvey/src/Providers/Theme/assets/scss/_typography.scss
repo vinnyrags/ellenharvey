@@ -5,17 +5,13 @@
 //
 // Font families, sizes, and base colors come from theme.json (Arial body,
 // Verdana gold h2, etc.). This partial adds the structural touches
-// theme.json can't express: the dotted h1 rule, heading rhythm, and the
-// justified body copy of the original.
+// theme.json can't express: heading rhythm and the justified body copy of the
+// original. (The page-title <h1> dotted rule is now the "Page Title" block
+// style — .is-style-page-title in _block-styles.scss — selected per heading in
+// the CMS, not a route-based selector here.)
 // ==========================================================================
 
 .site-main {
-    h1 {
-        padding-bottom: 0.3125rem; // 5px
-        border-bottom: 1px dotted var(--wp--preset--color--rule-gray);
-        letter-spacing: 0.02em;
-    }
-
     // Heading rhythm — vertical space lives on margin-block-start of the
     // following element, never margin-block-end (house rule).
     //   - Every non-h1 heading and paragraph: 16px (--30).

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ellenharvey/photo-gallery",
+  "title": "Photo Gallery",
+  "category": "media",
+  "icon": "format-gallery",
+  "description": "The grid of production posters; each opens a lightbox of that production's photos. Renders every Photos post in admin (menu) order.",
+  "keywords": ["photos", "gallery", "lightbox", "posters"],
+  "supports": {
+    "html": false,
+    "align": false,
+    "spacing": {
+      "margin": true
+    }
+  },
+  "textdomain": "ellenharvey",
+  "render": "file:./render.php"
+}

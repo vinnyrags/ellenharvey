@@ -1,18 +1,13 @@
 @use 'common/breakpoints' as *;
 
 // ==========================================================================
-// Per-page photographic backgrounds.
+// Page background base.
 //
-// Each route in the original sets its own full-bleed photo of Ellen on a
-// black field (center-top). We reproduce that, mapped by the body classes
-// WP emits (`.home`, `.post-type-archive-*`) plus the slug class added by
-// ThemeProvider::addPageSlugBodyClass (`.page-news`, etc.).
-//
-// url() paths resolve relative to the COMPILED CSS at dist/css/theme.css —
-// out of dist/css/ and back into the provider's assets/images directory.
+// Each page carries its own full-bleed photo of Ellen on a black field via a
+// core/group block background (set in the editor), so the body just provides
+// the black backdrop the photos sit on. (Earlier the Photos CPT archive set a
+// body background here; it's now an ordinary page like the rest.)
 // ==========================================================================
-
-$img: '../../src/Providers/Theme/assets/images';
 
 // Faithful to the original: each photo sits at its natural size (1440x900),
 // centered-top on a black field, scrolling with the page — no `cover`
@@ -22,13 +17,8 @@ body {
     background-color: #000;
     background-repeat: no-repeat;
     background-position: center top;
-    // Plain black. Every regular page now carries its photo on a Group block
-    // (the hero), so the only route that still needs a body photo is the Photos
-    // CPT archive below.
-}
-
-// The Photos gallery is the last CPT archive (not a block page), so it keeps its
-// photographic body background.
-body.post-type-archive-gallery {
-    background-image: url('#{$img}/back_photos.jpg');
+    // Plain black. Every page now carries its photo on a Group block (the hero)
+    // — including Photos, which is an ordinary CMS page with the back_contact.jpg
+    // group background + the ellenharvey/photo-gallery block. No route needs a
+    // body photo anymore.
 }

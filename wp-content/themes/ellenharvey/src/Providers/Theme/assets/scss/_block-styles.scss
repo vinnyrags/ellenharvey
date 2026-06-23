@@ -21,9 +21,13 @@
     color: var(--wp--preset--color--gold);
 }
 
-// core/heading · "Underline": page title with a dotted rule beneath it.
-.is-style-underline {
-    font-size: var(--wp--preset--font-size--x-large); // 22px
+// core/heading · "Page Title": the page <h1> — xx-large, lightly tracked, with
+// the dotted rule beneath. Replaces the former global `.site-main h1` rule so
+// the page-title look is a CMS-selectable style (applied per heading, and
+// visible in the editor) rather than a route-based CSS selector.
+.is-style-page-title {
+    font-size: var(--wp--preset--font-size--xx-large); // 30px
+    letter-spacing: 0.02em;
     padding-bottom: 0.3125rem; // 5px
     border-bottom: 1px dotted var(--wp--preset--color--rule-gray);
 }
