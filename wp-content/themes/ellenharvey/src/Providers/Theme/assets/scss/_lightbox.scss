@@ -1,0 +1,160 @@
+@use 'common/breakpoints' as *;
+
+// ==========================================================================
+// Lightbox overlay — mirrors the original site's classic Lightbox2: a white
+// frame around the image, prev/next as hover zones over the image halves, and a
+// data bar below (caption, "Image X of Y" counter, close).
+//
+// A full-viewport overlay appended to <body> by gallery-lightbox.js — purely a
+// front-end concern (the script never runs in the block editor), so this lives
+// apart from the grid/panel styles (_gallery.scss) and is NOT pulled into the
+// editor stylesheet.
+// ==========================================================================
+
+.has-lightbox-open {
+    overflow: hidden;
+}
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+
+    &.is-open {
+        display: flex;
+    }
+}
+
+.lightbox__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+// White frame hugs the image and carries the data bar. Its width is set by
+// gallery-lightbox.js to the displayed photo width (fit-content is only the
+// pre-script fallback); the transition makes paging between differently-sized
+// photos a smooth Lightbox2 resize instead of a snap.
+.lightbox__frame {
+    position: relative;
+    z-index: 1;
+    box-sizing: border-box;
+    width: fit-content;
+    max-width: 90vw;
+    padding: 10px;
+    background: #fff;
+    transition: width 0.25s ease;
+}
+
+// Height is set by the script to the displayed photo height; the image fills
+// it exactly (object-fit: contain), so the white frame never shows whitespace
+// beside or below the photo, and the height animates alongside the width.
+.lightbox__image-wrap {
+    position: relative;
+    line-height: 0; // remove the inline-image descender gap
+    transition: height 0.25s ease;
+}
+
+.lightbox__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    // Each slide is swapped while hidden then faded in by the script (it sets
+    // opacity 0 → 1); this is the fall-back transition that reset re-enables.
+    transition: opacity 0.3s ease;
+}
+
+// Prev / next — invisible click zones over the left/right halves of the
+// image; the arrow fades in on hover, Lightbox2-style.
+.lightbox__nav {
+    position: absolute;
+    inset-block: 0;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    padding: 0 0.75rem;
+    background: none;
+    border: 0;
+    cursor: pointer;
+}
+
+.lightbox__nav--prev {
+    inset-inline-start: 0;
+    justify-content: flex-start;
+}
+
+.lightbox__nav--next {
+    inset-inline-end: 0;
+    justify-content: flex-end;
+}
+
+.lightbox__nav-arrow {
+    font-size: 3rem;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.lightbox__nav:hover .lightbox__nav-arrow,
+.lightbox__nav:focus-visible .lightbox__nav-arrow {
+    opacity: 1;
+}
+
+// Data bar below the image: the bold caption, then a counter + close row.
+.lightbox__data {
+    margin-block-start: 8px;
+    color: #000;
+    font-size: var(--wp--preset--font-size--small);
+    line-height: 1.3;
+}
+
+.lightbox__caption {
+    margin: 0;
+    font-weight: 700;
+}
+
+.lightbox__details {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-block-start: 4px;
+}
+
+.lightbox__counter {
+    margin: 0;
+    color: #555;
+}
+
+.lightbox__close {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: #000;
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+        color: var(--wp--preset--color--crimson);
+    }
+}
+
+@include reduced-motion {
+    .lightbox__frame,
+    .lightbox__image-wrap,
+    .lightbox__image,
+    .lightbox__nav-arrow,
+    .lightbox__close {
+        transition: none;
+    }
+}

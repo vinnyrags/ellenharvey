@@ -14,6 +14,8 @@
 @use '../press-quotes';
 @use '../block-styles';
 @use '../news';
+@use '../media-split'; // page hero: content panel beside Ellen's photo
+@use '../gallery'; // photos panel + poster grid, so the photo-gallery block preview matches the front end
 
 // Marcellus, self-hosted. The shared partial references the family, but the
 // @font-face must be declared here too — the front-end _fonts.scss isn't loaded

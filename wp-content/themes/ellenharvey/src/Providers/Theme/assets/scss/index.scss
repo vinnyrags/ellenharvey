@@ -13,5 +13,7 @@
 @use 'press-quotes'; // also pulled into the editor (features/editor.scss); defines --eh-panel-scrim
 @use 'news'; // also pulled into the editor (features/editor.scss)
 @use 'block-styles'; // reusable block style variants (also in the editor)
-@use 'gallery';
+@use 'media-split'; // page hero: content panel beside Ellen's photo (also in the editor)
+@use 'gallery'; // photos panel + poster grid (also in the editor)
+@use 'lightbox'; // front-end-only poster lightbox overlay
 @use 'media';

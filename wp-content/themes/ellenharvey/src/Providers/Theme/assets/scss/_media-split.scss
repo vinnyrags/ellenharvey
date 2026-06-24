@@ -1,0 +1,73 @@
+@use 'common/breakpoints' as *;
+
+// ==========================================================================
+// .media-split — the page hero: a content panel beside Ellen's photo.
+//
+// A core/columns with two children in source order: the content panel, then a
+// .media-figure column holding a real <img> of Ellen.
+//
+//   Desktop  →  the photo is the GROUP'S BACKGROUND (the original full-stage
+//               look — the content panel overlays its left, Ellen shows on the
+//               right at natural scale). The media-figure image is hidden here.
+//   Mobile   →  the columns stack and reverse, the background is dropped, and the
+//               media-figure image is revealed as the first stacked section (a
+//               full-width banner) with the content beneath.
+//
+// Why both a background AND a real image: the background gives desktop the exact
+// original framing (which a confined right-column image can't reproduce), while
+// the real image lets the photo stack accessibly on mobile. DOM order stays
+// panel-first, so a screen reader reaches the page <h1> before the photo. Shared
+// with the editor (features/editor.scss) so the block preview matches.
+// ==========================================================================
+
+// Desktop: the background carries the photo, so hide the figure image — but keep
+// the (now empty) column so the panel still occupies its half and the background
+// shows through the other.
+.media-figure {
+    min-width: 0; // flex items default to the image's intrinsic min-width
+
+    > * {
+        display: none;
+    }
+}
+
+// Below WordPress's column-stacking breakpoint the columns stack; reverse them so
+// the photo leads, drop the desktop-only background, and reveal the figure image.
+@media (max-width: 781px) {
+    .wp-block-group:has(.wp-block-columns.media-split) {
+        // Edge-to-edge banner (the panel keeps its own padding); the background is
+        // desktop-only.
+        padding-inline: 0;
+        background-image: none !important;
+    }
+
+    .wp-block-columns.media-split {
+        flex-direction: column-reverse;
+        // The desktop 100vh hero height (set inline on the block) would strand a
+        // tall gap once stacked — let the stack size to its content.
+        min-height: 0 !important;
+    }
+
+    .media-figure {
+        > * {
+            display: revert;
+        }
+
+        figure,
+        .wp-block-image {
+            height: auto;
+            margin: 0;
+        }
+
+        // Full-width banner cropped to Ellen (top-right of every source image),
+        // right-justified. A 3:2 ratio ≈ the trimmed source, so ~nothing is lost.
+        img {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 3 / 2;
+            object-fit: cover;
+            object-position: 100% 0%;
+        }
+    }
+}

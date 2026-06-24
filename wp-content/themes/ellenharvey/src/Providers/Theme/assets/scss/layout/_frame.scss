@@ -79,6 +79,38 @@ body.has-overlay-header:not(.home) .site-main > .wp-block-group {
     margin-inline: calc(50% - 50vw);
 }
 
+// Homepage hero on mobile. The hero photo is a landscape shot (Ellen sits left
+// of centre, city skyline right), so in portrait we: crop to cover with the
+// focal point on Ellen; lay a legibility scrim along the bottom so the white
+// press quotes read over any part of the photo; and anchor the rotating quote in
+// the lower third, clear of her face. Desktop keeps its centred, overlaid look.
+@media (max-width: 781px) {
+    body.home .full-bleed-hero {
+        position: relative;
+        background-size: cover !important; // override the block's natural-size inline style
+        background-position: 28% 12% !important; // focus on Ellen
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent 50%);
+            pointer-events: none;
+        }
+
+        // The hero columns keep their desktop flex (an empty spacer + the quote);
+        // rather than fight it, anchor the rotating quote in the lower third over
+        // the scrim. The columns' inline min-height:100vh keeps the hero tall.
+        .wp-block-ix-content-slider {
+            position: absolute;
+            inset-inline: 0;
+            bottom: 10vh;
+            z-index: 1;
+            margin-inline: auto;
+        }
+    }
+}
+
 // Footer landmark (visually inert; credits live on the Contact page).
 .site-footer {
     min-height: 0;
