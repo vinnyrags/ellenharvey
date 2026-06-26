@@ -56,7 +56,8 @@
     ],
     "reinstall-nested": [
       "@composer install --working-dir=wp-content/mu-plugins/mythus --no-interaction",
-      "@composer install --working-dir=wp-content/themes/ix --no-interaction"
+      "@composer install --working-dir=wp-content/themes/ix --no-interaction",
+      "@composer install --working-dir=wp-content/themes/ellenharvey --no-interaction"
     ]
   }
 }

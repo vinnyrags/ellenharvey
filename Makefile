@@ -41,6 +41,15 @@ help: ## Show available targets, grouped by section
 		/^[a-zA-Z][a-zA-Z0-9_-]*:.*?## / {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}' \
 		$(MAKEFILE_LIST)
 
+##@ Setup
+
+setup: ## First-run: auth.json + DDEV config, then start + pull content from production
+	@test -f auth.json || cp ../vincentragosta.io/auth.json ./auth.json 2>/dev/null || { echo "✗ auth.json missing (needed for ACF Pro) — copy it from another Mythus/IX project"; exit 1; }
+	@test -d .ddev || ddev config --project-type=wordpress --docroot="" --project-name=ellenharvey
+	@$(MAKE) start
+	@$(MAKE) pull-content
+	@echo "✓ Setup complete — $(LOCAL_URL)"
+
 ##@ Local environment
 
 start: ## Start DDEV, install deps, build assets
