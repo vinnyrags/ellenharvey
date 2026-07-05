@@ -79,6 +79,30 @@ body.has-overlay-header:not(.home) .site-main > .wp-block-group {
     margin-inline: calc(50% - 50vw);
 }
 
+// Inner-page hero photos: match the original site's framing. Prod paints the
+// photo as the BODY background — centred on the full viewport, top-aligned. Our
+// inner heroes were confined to the 1000px stage and right-aligned (100% 0%),
+// which shifted Ellen ~100px left of the original and left a black gap on the
+// right. Break these heroes out to full-viewport width and centre the photo like
+// prod. The content panel stays in the 1000px stage via the group's constrained
+// inner layout, so only the background repositions.
+@media (min-width: 782px) {
+    body:not(.home) .site-main > .wp-block-group.has-background {
+        width: 100vw;
+        max-width: 100vw;
+        margin-inline: calc(50% - 50vw);
+        background-position: center top !important;
+
+        // Full-bleed widens the group's constrained context, which would stretch
+        // the content columns; pin them back to the 1000px stage, centred, so only
+        // the background repositions and the panel stays exactly where it was.
+        > .wp-block-columns {
+            max-width: $stage-width;
+            margin-inline: auto;
+        }
+    }
+}
+
 // Homepage hero on mobile. The hero photo is a landscape shot (Ellen sits left
 // of centre, city skyline right), so in portrait we: crop to cover with the
 // focal point on Ellen; lay a legibility scrim along the bottom so the white
