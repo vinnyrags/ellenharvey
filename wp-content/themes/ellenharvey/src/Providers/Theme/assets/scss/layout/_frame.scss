@@ -128,32 +128,6 @@ body.has-overlay-header:not(.home) .site-main > .wp-block-group {
     }
 }
 
-// Hero photo scale — Media, Contact, Photos, News only.
-//
-// These pages put the important part of the shot (hands / legs) in the lower
-// half of the 770x513 photo. At natural size Ellen renders larger than the
-// original site and, because their content panels are shorter than the photo,
-// the bottom clips — her resting hand on Media, her legs on Contact, etc. — and
-// the photo reads slightly soft. Scaling the background down to ~the original's
-// framing (555px ≈ 72%) sits the whole figure in frame and sharpens it (per
-// Ellen: "a hair smaller").
-//
-// Deliberately NOT a blanket rule: Reviews and Resume display their same-size
-// photos at a different intended scale and already match the original, so they
-// are excluded by targeting these four page slugs explicitly. Home is the
-// full-bleed sunset and is untouched. The !important overrides the block's
-// inline background-size:auto.
-@media (min-width: 782px) {
-    body.page-media,
-    body.page-contact,
-    body.page-photos,
-    body.page-news {
-        .site-main > .wp-block-group.has-background {
-            background-size: 555px auto !important;
-        }
-    }
-}
-
 // Footer landmark (visually inert; credits live on the Contact page).
 .site-footer {
     min-height: 0;
