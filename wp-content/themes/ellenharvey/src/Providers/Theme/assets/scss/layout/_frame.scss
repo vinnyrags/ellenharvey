@@ -65,6 +65,26 @@ body.has-overlay-header:not(.home) .site-main > .wp-block-group {
     padding-block-start: var(--ix-header-height);
 }
 
+// Interior hero pages: match the original's vertical placement. Prod paints each
+// photo from the very top of the page with the header floating over it; our
+// interior pages kept the header in normal flow, pushing the hero photo down by
+// the header height. Float the header over any interior page that has a hero, and
+// drop its content below the header — so the photo starts at the top edge, like
+// the original (and like our own homepage). Desktop only; mobile stacks the hero
+// as a banner and keeps the header in flow.
+@media (min-width: 782px) {
+    body:not(.home):has(.site-main > .wp-block-group.has-background) .site-header {
+        position: absolute;
+        top: 0;
+        inset-inline: 0;
+        z-index: 2;
+    }
+
+    body:not(.home) .site-main > .wp-block-group.has-background {
+        padding-block-start: var(--ix-header-height);
+    }
+}
+
 // Full-bleed hero — opt-in via the "full-bleed-hero" class on a hero Group
 // (set in the editor's Advanced → Additional CSS class). The stage caps the
 // page at 1000px (.site-layout), which would box a hero photo's background
