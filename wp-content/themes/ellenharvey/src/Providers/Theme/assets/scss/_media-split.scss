@@ -46,28 +46,39 @@
         // The desktop 100vh hero height (set inline on the block) would strand a
         // tall gap once stacked — let the stack size to its content.
         min-height: 0 !important;
+        // Stacked flex items otherwise shrink-wrap to their content, leaving the
+        // photo column narrow and right-aligned; stretch them full-width.
+        align-items: stretch;
+        gap: 0; // no row-gap between the banner and the content panel
     }
 
     .media-figure {
+        width: 100%; // full-width banner column (was shrink-wrapping to the image)
+        flex: none;
+
         > * {
             display: revert;
         }
 
         figure,
         .wp-block-image {
-            height: auto;
-            margin: 0;
+            width: 100%; // stretch the banner edge to edge (the wp-block-image
+            height: auto; // figure otherwise keeps its intrinsic width, leaving
+            margin: 0; // black gaps at the sides of the photo)
         }
 
-        // Full-width banner cropped to Ellen (top-right of every source image),
-        // right-justified. A 3:2 ratio ≈ the trimmed source, so ~nothing is lost.
+        // Full-width banner. The source photos are wide 3:2 shots with Ellen
+        // (upper-right) surrounded by dark studio/shadow — at 3:2 on mobile that
+        // dark fills most of the banner and reads as empty space. Use a squarer
+        // ratio so object-fit:cover crops into the frame, zooming onto Ellen and
+        // trimming the dark margins (per Ellen: reduce the whitespace).
         img {
             display: block;
             width: 100%;
             height: auto;
-            aspect-ratio: 3 / 2;
+            aspect-ratio: 1 / 1;
             object-fit: cover;
-            object-position: 100% 0%;
+            object-position: 62% 15%; // favour Ellen (right-of-centre, upper)
         }
     }
 }
