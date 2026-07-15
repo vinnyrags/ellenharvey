@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "acf202b4caada5a07d57be9813859a83",
+    "content-hash": "fe7a1acd0b2fdaac8b0fc61a3237899d",
     "packages": [
         {
             "name": "composer/installers",
@@ -1080,17 +1080,17 @@
         },
         {
             "name": "vincentragosta/mythus",
-            "version": "v1.0.1",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vinnyrags/mythus.git",
-                "reference": "8b953517738fe38e848d92d2c4ee74cbfcbe8231"
+                "reference": "e6c8a89819317de13754a0a96bc5e5edbe76dcdc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packages.vincentragosta.io/dist/vincentragosta/mythus/vincentragosta-mythus-8b953517738fe38e848d92d2c4ee74cbfcbe8231-zip-e584a8.zip",
-                "reference": "8b953517738fe38e848d92d2c4ee74cbfcbe8231",
-                "shasum": "6b7cf50d3e956cf6b78c1dfbca6ab06427c684b9"
+                "url": "https://packages.vincentragosta.io/dist/vincentragosta/mythus/vincentragosta-mythus-e6c8a89819317de13754a0a96bc5e5edbe76dcdc-zip-c41e8d.zip",
+                "reference": "e6c8a89819317de13754a0a96bc5e5edbe76dcdc",
+                "shasum": "11110a4d38f5192c60aff03475035be19786dd5a"
             },
             "require": {
                 "php": ">=8.3",
@@ -1127,10 +1127,10 @@
             ],
             "description": "WordPress platform framework — provider pattern, DI container integration, and support managers",
             "support": {
-                "source": "https://github.com/vinnyrags/mythus/tree/v1.0.1",
+                "source": "https://github.com/vinnyrags/mythus/tree/v1.2.0",
                 "issues": "https://github.com/vinnyrags/mythus/issues"
             },
-            "time": "2026-05-05T03:58:57+00:00"
+            "time": "2026-07-15T03:07:15+00:00"
         },
         {
             "name": "wpengine/advanced-custom-fields-pro",

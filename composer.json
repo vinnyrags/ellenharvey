@@ -22,7 +22,7 @@
     "composer/installers": "^1.12 || ^2.0",
     "johnpbloch/wordpress": "^6.5",
     "wpengine/advanced-custom-fields-pro": "^6.0",
-    "vincentragosta/mythus": "^1.0",
+    "vincentragosta/mythus": "^1.2",
     "vincentragosta/ix": "^1.2"
   },
   "extra": {
