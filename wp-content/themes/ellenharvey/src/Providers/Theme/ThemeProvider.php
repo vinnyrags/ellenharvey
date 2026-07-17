@@ -6,6 +6,7 @@ namespace EllenHarvey\Providers\Theme;
 
 use DI\Container;
 use EllenHarvey\Providers\Gallery\GalleryPost;
+use IX\Providers\Theme\Features\ContentPartial\ContentPartial;
 use IX\Providers\Theme\ThemeProvider as BaseThemeProvider;
 use IX\Services\IconServiceFactory;
 
@@ -23,7 +24,11 @@ class ThemeProvider extends BaseThemeProvider
      *
      * @var array<class-string|string, mixed>
      */
-    protected array $features = [];
+    protected array $features = [
+        // Header/footer are built directly in views/*.twig, so opt out of the
+        // platform's default-on content-partial CPT (IX v1.5.0+).
+        ContentPartial::class => false,
+    ];
 
     /**
      * Hooks to register (always-active; additive only).
