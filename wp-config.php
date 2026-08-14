@@ -9,20 +9,6 @@ define( 'DB_CHARSET', 'utf8' );
 /** The database collate type. Don't change this if in doubt. */
 define( 'DB_COLLATE', '' );
 
-/**#@+
- * Authentication Unique Keys and Salts.
- * Generated unique to this project; rotate on hand-off.
- */
-define('AUTH_KEY',         '%z@L{F[KDt)JIT.T~K7L+uBVr2!NX_hQ}NU2.vjl{$;i9w#F))YW,5vlr.+*qFXG');
-define('SECURE_AUTH_KEY',  '4MsB0 EZYY*+yw(FNR3|z;n6Ryf/ivcM[}-1+Mg+/0C!{|z<VTes>JQR0{%}HiA[');
-define('LOGGED_IN_KEY',    '$0hYf+e+;+Bk2~xasCyB9ht*<-ipt,cnchqT[/sF3hn^-}Nv|Iw9=ox-9N21[#?{');
-define('NONCE_KEY',        '2u-h,Wg_dr3m-3DrIUJ^38dVd/)-+C/9^sqV;W?Wi`,*Wzjs}8/w*}HmFH_+8(|T');
-define('AUTH_SALT',        '7o6u2-L8o52^t]t{Jvg(7uN{!y-exsJuHZ7[0nx@PZN!.a$:RLMg|`?y&+*$3^J}');
-define('SECURE_AUTH_SALT', 'At*Zc/,kWc}JECbYP$vZN{ crrC44C|JsH;Q7)!1.:-mLe+n;9(3msK)shSjgQKF');
-define('LOGGED_IN_SALT',   'Mj->lRZs^6|l0T:k^m_fEBUts EK33D7zn_|1)K~Z6b6|Z,ao?IfFW$4;{A1t%Dc');
-define('NONCE_SALT',       'gYqy&d&_|J+5tuEZh.YBDfVe+*v~cMC4>*~NLkmx(F]9-xu&#%yuS`nm_&oh^3vb');
-/**#@-*/
-
 /**
  * WordPress database table prefix.
  */
@@ -31,10 +17,30 @@ $table_prefix = 'wp_';
 // =====================================================================
 // Environment-specific settings (loaded from wp-config-env.php if present)
 // =====================================================================
+// Loaded BEFORE the salt fallbacks below so each environment supplies its own
+// secrets. wp-config-env.php is gitignored; salts must never be committed.
 $env_settings = __DIR__ . '/wp-config-env.php';
 if ( is_readable( $env_settings ) ) {
     require_once $env_settings;
 }
+
+/**#@+
+ * Authentication Unique Keys and Salts.
+ *
+ * Real secrets live in the gitignored wp-config-env.php, per environment.
+ * These placeholders only exist so a fresh checkout boots; they are
+ * deliberately non-secret and must never be used by a served environment.
+ * Generate real ones via https://api.wordpress.org/secret-key/1.1/salt/.
+ */
+if ( ! defined( 'AUTH_KEY' ) )         define( 'AUTH_KEY',         'insecure-placeholder-set-in-wp-config-env' );
+if ( ! defined( 'SECURE_AUTH_KEY' ) )  define( 'SECURE_AUTH_KEY',  'insecure-placeholder-set-in-wp-config-env' );
+if ( ! defined( 'LOGGED_IN_KEY' ) )    define( 'LOGGED_IN_KEY',    'insecure-placeholder-set-in-wp-config-env' );
+if ( ! defined( 'NONCE_KEY' ) )        define( 'NONCE_KEY',        'insecure-placeholder-set-in-wp-config-env' );
+if ( ! defined( 'AUTH_SALT' ) )        define( 'AUTH_SALT',        'insecure-placeholder-set-in-wp-config-env' );
+if ( ! defined( 'SECURE_AUTH_SALT' ) ) define( 'SECURE_AUTH_SALT', 'insecure-placeholder-set-in-wp-config-env' );
+if ( ! defined( 'LOGGED_IN_SALT' ) )   define( 'LOGGED_IN_SALT',   'insecure-placeholder-set-in-wp-config-env' );
+if ( ! defined( 'NONCE_SALT' ) )       define( 'NONCE_SALT',       'insecure-placeholder-set-in-wp-config-env' );
+/**#@-*/
 
 // =====================================================================
 // Custom Directory Structure Settings
