@@ -158,17 +158,34 @@ body.has-overlay-header:not(.home) .site-main > .wp-block-group {
 // Desktop homepage: drop the rotating quote out of the bright sunset horizon and
 // down into the darker cityscape band (per Ellen). The hero columns vertically-
 // centre their content by default (are-vertically-aligned-center), parking the
-// quote over the horizon; top-align them instead and push the quote down from the
-// top by a fixed viewport fraction so it sits in the dark band below the sunset,
-// still in its right-hand column. Larger value = lower on screen. Mobile keeps
-// its own bottom:10vh treatment above; scope to desktop.
+// quote over the horizon; top-align them instead and push the quote down so it
+// sits in the dark band below the sunset, still in its right-hand column.
+//
+// The offset MUST be in px, not vh. The hero photo is painted at its natural
+// 1440x900 size, anchored to the top of the hero (background-size:auto,
+// position:50% 0%) — so the dark cityscape band always lands at the same pixel
+// offset from the hero's top edge no matter how tall the viewport is. A vh
+// offset drifts against a photo that doesn't scale, which is exactly how the
+// quote crept back up into the sunset. Larger value = lower on screen; the
+// usable dark band runs roughly 455–700px down from the hero top.
+// Mobile keeps its own bottom:10vh treatment above; scope to desktop.
 @media (min-width: 782px) {
     body.home .full-bleed-hero .wp-block-columns {
         align-items: flex-start;
     }
 
+    // The columns block is set to "vertically aligned: center" in the editor,
+    // which puts `align-self: center` on each COLUMN. That wins over the
+    // container's align-items, so the quote stayed centred and kept tracking
+    // half of any viewport-height change. Pin the columns to the top so the px
+    // offset below is measured from the hero's top edge — the same edge the
+    // photo is anchored to.
+    body.home .full-bleed-hero .wp-block-column {
+        align-self: flex-start;
+    }
+
     body.home .full-bleed-hero .wp-block-ix-content-slider {
-        margin-block-start: 3vh;
+        margin-block-start: 490px;
     }
 }
 
