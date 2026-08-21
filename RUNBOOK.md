@@ -20,7 +20,12 @@ WP core sits in a **`/wp` subdirectory** (`$STAGING_DIR/wp`), so remote wp-cli n
 
 **There is no production environment.** The site lives on staging under a subdomain of
 vincentragosta.io. Moving it to its own hosting and DNS — off Ellen's existing JetHost account — is
-the open engagement item, along with her still-unanswered question about how she pays for hosting.
+the open engagement item.
+
+The destination is settled (2026-08-20): a **$6/mo DigitalOcean droplet, account in Ellen's own
+name, billed to her card directly** — we set it up, she owns it. DNS then points from JetHost to
+that droplet and JetHost lapses on its own in December. Not yet executed; see the engagement doc for
+the agreed signup flow.
 
 This droplet is **shared with vincentragosta.io** and is **not on deploy-kit** — extending deploy-kit
 to it is a tracked follow-up. Deploys here still use the older per-site post-receive hook.
@@ -68,6 +73,16 @@ before assuming a stale page is a cache problem.
    vendor instead.
 4. **`composer update vincentragosta/ix` wipes `ix/node_modules`** — run `npm install` inside the
    `ix` copy afterwards to restore build and test tooling.
+5. **Client content updates are additive in intent but get applied as replacements.** Ellen emails a
+   section (a résumé, a news blurb) meaning "add these" — pasting it in wholesale silently deletes
+   whatever else was there. This shipped: the 2026-08-03 pass cut the résumé from 68 credits to 13,
+   wiping ~25 years of history, and she caught it, not us.
+   **Before shipping any content rewrite, diff against the pre-rebuild originals in
+   `.assets-inbox/db-backups/`** (`resume-186.orig.html`, `contact-164.orig.html`) and confirm the
+   new version is a superset. Cross-check any PDF she attaches too — her 2026 résumé PDF held two
+   credits that were on neither the old site nor in her email body.
+   Post revisions in the DB are the other recovery path: `wp post list --post_type=revision
+   --post_parent=<id> --post_status=any`.
 
 ## See also
 
