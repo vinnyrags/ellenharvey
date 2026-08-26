@@ -24,8 +24,105 @@ the open engagement item.
 
 The destination is settled (2026-08-20): a **$6/mo DigitalOcean droplet, account in Ellen's own
 name, billed to her card directly** — we set it up, she owns it. DNS then points from JetHost to
-that droplet and JetHost lapses on its own in December. Not yet executed; see the engagement doc for
-the agreed signup flow.
+that droplet and JetHost lapses on its own in December. **Ellen greenlit the migration 2026-08-26**
+and gave `Shawgirlnyc@yahoo.com` as the account email; see the engagement doc for the signup flow.
+
+### DNS and mail facts (verified 2026-08-26)
+
+| | |
+|---|---|
+| Registrar | **Register.com / Network Solutions** — *not* JetHost; already decoupled |
+| Domain expiry | **2027-09-30** — no near-term renewal deadline |
+| Nameservers | `ns1–4.jethostns.com` — **served by JetHost, dies in December** |
+| Live A record | `15.204.159.119` (JetHost) |
+| MX | `ellenharvey.net` → `15.204.159.119` — **her mail is on the JetHost box** |
+
+### JetHost account audit (read-only, 2026-08-26)
+
+| | |
+|---|---|
+| Product | Hosting for WordPress — Plan WP Start, `ellenharvey.net`, Active |
+| Customer since | 2011-11-17 |
+| **Recurring** | **$96.00/yr — auto-renews 2026-12-15 on a credit card on file** |
+| Cancellation | via **"Request Cancellation"** — a request flow, needs lead time |
+| Disk / bandwidth | 195 MB of 25 GB · 420 MB |
+| WordPress installs | none (the legacy site is hand-coded static HTML) |
+| Email accounts | **none** |
+| Forwarders | **`ellen@ellenharvey.net` → `eharvey.net@gmail.com`** (the only one) |
+| Catch-all | Not Found / discard |
+| Addon domains | none — single domain |
+| Account NS / IP | `ns1,ns2.use2.jethosting.com` · `15.204.159.119` |
+
+### Cutover checklist (built 2026-08-26 — none of this is done yet)
+
+**1. Legacy URL redirects — the biggest unhandled gap.** The legacy site is 25 years of indexed `.htm`
+URLs. **All of them 404 on the new site today.** Every page has a counterpart, so this is redirects,
+not missing content. Its `sitemap.xml` (2014-era) is the authoritative inventory — 11 URLs:
+
+| Legacy | New |
+|---|---|
+| `/index.htm` | `/` |
+| `/news.htm` | `/news/` |
+| `/resume.htm` | `/resume/` |
+| `/reviews.htm` | `/reviews/` |
+| `/photos.htm` | `/photos/` |
+| `/media.htm` | `/media/` |
+| `/contact.htm` | `/contact/` |
+| `/resume.pdf` | the 2026 PDF in uploads — this is the **2011** résumé and is the likeliest external link (agents, casting sites) |
+| `/ellen1.pdf`, `/ellen2.pdf` | orphaned — nothing on the live site links to them since ~2014, contents unidentified. Decide or leave 404. |
+
+Do these as 301s in the nginx vhost, not a plugin. Drop this into the **production** `server {}`
+block — exact-match (`location =`) rules win over the generic `location /` regardless of where they
+sit in the file, so placement is free:
+
+```nginx
+# ── Legacy .htm redirects (pre-2026 hand-coded site) ─────────────────────────
+# Source of truth: the old site's sitemap.xml — 11 URLs, captured 2026-08-26.
+# 301 is permanent and gets cached by browsers and Google. Get it right once.
+location = /index.htm   { return 301 https://$host/; }
+location = /news.htm    { return 301 https://$host/news/; }
+location = /resume.htm  { return 301 https://$host/resume/; }
+location = /reviews.htm { return 301 https://$host/reviews/; }
+location = /photos.htm  { return 301 https://$host/photos/; }
+location = /media.htm   { return 301 https://$host/media/; }
+location = /contact.htm { return 301 https://$host/contact/; }
+
+# The 2011 résumé PDF — likeliest externally-linked asset (agents, casting).
+location = /resume.pdf {
+    return 301 https://$host/wp-content/uploads/2026/08/Ellen_Harvey_2026_resume.pdf;
+}
+
+# /ellen1.pdf, /ellen2.pdf — single-page image scans, in the 2011 sitemap,
+# orphaned since ~2014. Contents unidentified; deliberately left to 404.
+```
+
+⚠ **The `/resume.pdf` rule hard-codes the current upload path.** Replacing her résumé PDF changes
+that path and silently breaks this redirect. Re-check it any time the PDF is swapped.
+
+**Two adjacent fixes for the same vhost:**
+
+- `location = /robots.txt { ... }` in the current staging vhost has no `try_files`, so it serves from
+  disk, finds nothing, and 404s — WordPress's generated robots.txt is unreachable. Harmless while
+  `blog_public=0`, wrong once the site is public. Let it fall through to `index.php`.
+- The legacy site answers on apex **and** www over both http and https with no canonical. Pick one
+  host, 301 the other three, and force https — do that in a separate `server {}` so these `.htm`
+  rules only ever run on the canonical host and no request takes two hops.
+
+**2. Flip search visibility at go-live.** `blog_public` is currently **`0`** and the `noindex, nofollow`
+meta is confirmed present — correct for staging, fatal if it ships. Set to `1` at cutover and verify
+the meta is gone.
+
+**3. Canonicalise the hostname.** The legacy site answers on **all four** of apex/www × http/https,
+each returning 200 with no redirect. Pick one canonical host, 301 the rest, and force https.
+
+**Before letting JetHost go, do two more things.**
+
+1. **Rebuild the mail forward.** `ellen@ellenharvey.net` is published on her Contact page and its MX is
+   the JetHost box; this droplet cannot send *or* receive mail (trap #2). It is a **pure forward**, so
+   **Cloudflare Email Routing replaces it at $0** — no mailbox migration, no paid provider.
+2. **Cancel — do not let it lapse.** The plan bills **$96 on 2026-12-15** against a card on file.
+   "Lapsing" charges her. Submit the cancellation request once the migration is verified, with room
+   before 2026-12-15.
 
 This droplet is **shared with vincentragosta.io** and is **not on deploy-kit** — extending deploy-kit
 to it is a tracked follow-up. Deploys here still use the older per-site post-receive hook.
