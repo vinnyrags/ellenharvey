@@ -37,6 +37,46 @@ and gave `Shawgirlnyc@yahoo.com` as the account email; see the engagement doc fo
 | Live A record | `15.204.159.119` (JetHost) |
 | MX | `ellenharvey.net` → `15.204.159.119` — **her mail is on the JetHost box** |
 
+### Target Cloudflare zone (built from the live zone, 2026-08-26)
+
+The live zone as it stands, and what each record becomes. `mail`/`ftp`/`webmail`/`smtp` are cPanel
+defaults that exist only to serve JetHost — they go away with it and must **not** be recreated.
+
+| Type | Name | Live value | After |
+|---|---|---|---|
+| A | `@` | `15.204.159.119` | new droplet IP |
+| AAAA | `@` | `2607:7700:0:e:0:2:fcc:9f77` | droplet IPv6, or drop |
+| A | `www` | `15.204.159.119` | new droplet IP |
+| A | `mail`,`ftp`,`webmail`,`smtp` | `15.204.159.119` | **drop — JetHost-only** |
+| MX | `@` | `10 ellenharvey.net` | Cloudflare Email Routing MX |
+| TXT | `@` | `v=spf1 ip4:15.204.166.98 ip4:15.204.159.120 include:spf.guardedhost.com ~all` | Cloudflare Email Routing SPF |
+| TXT | `_dmarc` | `v=DMARC1; p=reject; aspf=s` | **keep as-is** |
+
+`p=reject` with strict alignment is already correct and worth preserving — nothing legitimately sends
+as `@ellenharvey.net` (there are no mailboxes), so a strict policy costs nothing and blocks spoofing.
+No CAA records exist.
+
+### Legacy site archive
+
+Full mirror of the pre-rebuild site at **`.assets-inbox/legacy-site-archive/`** — 112 files, 26 MB,
+captured 2026-08-26: all 7 `.htm` pages, `sitemap.xml`, all 3 PDFs, and all 101 referenced CSS/JS/image
+assets, fetched with zero misses.
+
+⚠ **`.assets-inbox/` is gitignored, so this lives only on the local machine.** The same is true of the
+`db-backups/` originals that trap #5 names as the résumé recovery path — that recovery route exists on
+one laptop and nowhere else. Worth copying somewhere durable before JetHost is cancelled, after which
+the source is gone for good.
+
+### Rebuild content parity — verified 2026-08-26
+
+Checked because trap #5 had already bitten once on the résumé. **The galleries are clean.** Every
+legacy gallery survived with its exact photo count:
+
+`Big Love` 7 · `The Phantom of the Opera` 10 · `How To Succeed` 7 · `Mary Poppins` 5 ·
+`High School Musical` 6 · `Mamma Mia!` 5 · `Phantom` 18 · `The Music Man` 10 — plus the new
+`Cabaret` 5 and `Wicked` 2. All 68 legacy photos present, and every legacy page (including Media and
+Reviews) has a counterpart. The only legacy gap is URLs, not content.
+
 ### JetHost account audit (read-only, 2026-08-26)
 
 | | |
@@ -53,11 +93,12 @@ and gave `Shawgirlnyc@yahoo.com` as the account email; see the engagement doc fo
 | Addon domains | none — single domain |
 | Account NS / IP | `ns1,ns2.use2.jethosting.com` · `15.204.159.119` |
 
-### Cutover checklist (built 2026-08-26 — none of this is done yet)
+### Cutover checklist
 
-**1. Legacy URL redirects — the biggest unhandled gap.** The legacy site is 25 years of indexed `.htm`
-URLs. **All of them 404 on the new site today.** Every page has a counterpart, so this is redirects,
-not missing content. Its `sitemap.xml` (2014-era) is the authoritative inventory — 11 URLs:
+**1. Legacy URL redirects — ✅ BUILT AND LIVE ON STAGING (2026-08-26).** The legacy site is 25 years of
+indexed `.htm` URLs, and all of them used to 404 on the rebuild. Every page has a counterpart, so this
+was redirects, not missing content. The old `sitemap.xml` (2014-era) was the authoritative inventory —
+11 URLs:
 
 | Legacy | New |
 |---|---|
@@ -71,9 +112,17 @@ not missing content. Its `sitemap.xml` (2014-era) is the authoritative inventory
 | `/resume.pdf` | the 2026 PDF in uploads — this is the **2011** résumé and is the likeliest external link (agents, casting sites) |
 | `/ellen1.pdf`, `/ellen2.pdf` | orphaned — nothing on the live site links to them since ~2014, contents unidentified. Decide or leave 404. |
 
-Do these as 301s in the nginx vhost, not a plugin. Drop this into the **production** `server {}`
-block — exact-match (`location =`) rules win over the generic `location /` regardless of where they
-sit in the file, so placement is free:
+**Where this lives now:** `/etc/nginx/snippets/ellenharvey-legacy-redirects.conf` on the staging
+droplet, pulled into the vhost with `include snippets/ellenharvey-legacy-redirects.conf;` just below
+`client_max_body_size`. It follows the same pattern as `wp-hardening.conf`, so **carrying it to the
+production droplet is a file copy plus one include line** — don't retype it. Pre-change vhost backup
+is at `/root/ellenharvey.vhost.bak-20260826-202115`.
+
+Verified on staging: all 8 rules return 301 and resolve to 200, `ellen1/2.pdf` still 404 by design,
+and every live page plus the other five sites on the shared droplet were unaffected by the reload.
+
+The contents, for reference — exact-match (`location =`) rules win over the generic `location /`
+regardless of where they sit in the file, so placement is free:
 
 ```nginx
 # ── Legacy .htm redirects (pre-2026 hand-coded site) ─────────────────────────
