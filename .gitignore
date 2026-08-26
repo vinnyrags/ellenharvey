@@ -39,4 +39,9 @@ wp-content/themes/ix
 wp-content/plugins
 wp-content/uploads
 wp-content/debug.log
-.assets-inbox/
+# Scratch inbox stays out of VCS — EXCEPT the pre-edit originals, which
+# RUNBOOK.md trap #5 names as the résumé recovery path. Those are a few KB
+# and are useless if they only exist on one laptop.
+.assets-inbox/*
+!.assets-inbox/db-backups/
+!.assets-inbox/*.html
