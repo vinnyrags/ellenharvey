@@ -37,6 +37,15 @@ and gave `Shawgirlnyc@yahoo.com` as the account email; see the engagement doc fo
 | Live A record | `15.204.159.119` (JetHost) |
 | MX | `ellenharvey.net` → `15.204.159.119` — **her mail is on the JetHost box** |
 
+⚠ **The staging URL's DNS is not in this project.** `ellenharvey.vincentragosta.io` is an A record to
+`174.138.70.29` inside the **`vincentragosta.io` zone**, which currently lives on **DigitalOcean DNS**
+and is slated to move to Cloudflare as separate work. That record must survive the move — it is the
+preview link Ellen reviews — and it should stay unproxied: this vhost has its own Let's Encrypt cert
+and `blog_public=0`, both of which behave differently behind Cloudflare's proxy.
+
+**Ellen's zone goes in a Cloudflare account of her own** (`Shawgirlnyc@yahoo.com`), *not* Vincent's
+existing account — see the engagement doc for why. The two are deliberately separate.
+
 ### Target Cloudflare zone (built from the live zone, 2026-08-26)
 
 The live zone as it stands, and what each record becomes. `mail`/`ftp`/`webmail`/`smtp` are cPanel
