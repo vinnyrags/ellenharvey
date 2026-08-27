@@ -56,10 +56,29 @@ defaults that exist only to serve JetHost — they go away with it and must **no
 | A | `@` | `15.204.159.119` | new droplet IP |
 | AAAA | `@` | `2607:7700:0:e:0:2:fcc:9f77` | droplet IPv6, or drop |
 | A | `www` | `15.204.159.119` | new droplet IP |
-| A | `mail`,`ftp`,`webmail`,`smtp` | `15.204.159.119` | **drop — JetHost-only** |
-| MX | `@` | `10 ellenharvey.net` | Cloudflare Email Routing MX |
-| TXT | `@` | `v=spf1 ip4:15.204.166.98 ip4:15.204.159.120 include:spf.guardedhost.com ~all` | Cloudflare Email Routing SPF |
+| A | `ftp`,`webmail`,`smtp` | `15.204.159.119` | **drop — JetHost-only** |
+| A | `mail` | `15.204.159.119` | **KEEP through the transition** — see below |
+| MX | `@` | `10 ellenharvey.net` | **`10 mail.ellenharvey.net` at cutover**, then Cloudflare Email Routing |
+| TXT | `@` | `v=spf1 ip4:15.204.166.98 ip4:15.204.159.120 include:spf.guardedhost.com ~all` | keep during transition; Cloudflare Email Routing SPF after |
 | TXT | `_dmarc` | `v=DMARC1; p=reject; aspf=s` | **keep as-is** |
+
+> ☠️ **The MX record self-references the domain, and that kills her mail the instant the A record moves.**
+>
+> Today `MX @ → 10 ellenharvey.net`, and `ellenharvey.net` resolves to the JetHost box, which runs the
+> mail. After cutover `ellenharvey.net` resolves to the **droplet**, which has no MTA and cannot
+> receive mail (trap #2). Copy that MX across verbatim and mail to `ellen@ellenharvey.net` starts
+> disappearing the moment DNS propagates — **silently**, with no bounce she would ever see.
+>
+> **Fix:** at cutover, keep the `mail` A record on `15.204.159.119` and repoint the MX at it —
+> `MX 10 mail.ellenharvey.net`. Her mail keeps flowing through JetHost, which is paid to December,
+> while the web moves to the droplet. Swap to Cloudflare Email Routing as a **separate, later step**,
+> and only after verifying it end to end.
+>
+> **Email Routing cannot be enabled on cutover night anyway.** It requires the zone to already be
+> active on Cloudflare nameservers, *and* the destination address (`eharvey.net@gmail.com`) to be
+> verified by someone clicking a link Cloudflare sends there. Ellen has not confirmed she can still
+> access that inbox. Until she does, the `mail`-record bridge above is what keeps her contact address
+> alive — do not remove it on the assumption Email Routing will be ready.
 
 `p=reject` with strict alignment is already correct and worth preserving — nothing legitimately sends
 as `@ellenharvey.net` (there are no mailboxes), so a strict policy costs nothing and blocks spoofing.
