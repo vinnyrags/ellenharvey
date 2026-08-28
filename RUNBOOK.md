@@ -70,6 +70,7 @@ changes certificate handling. Cloudflare will nag that the domain "is not fully 
 | Type | Name | Value |
 |---|---|---|
 | A | `@`, `www` | **`161.35.119.59`** — the droplet. TTL **60s** for fast cutover/revert. |
+| AAAA | `@`, `www`, `staging` | **`2604:a880:400:d1:0:4:e2a7:f001`** — the droplet |
 | A | `staging` | `161.35.119.59` |
 | A | `mail`, `ftp`, `pop3`, `smtp`, `stats`, `webmail` | `15.204.159.119` — **still JetHost** |
 | MX | `@` | `10 mail.ellenharvey.net` |
@@ -79,20 +80,41 @@ changes certificate handling. Cloudflare will nag that the domain "is not fully 
 A record inside the `vincentragosta.io` zone on DigitalOcean DNS. It still resolves and still serves
 the old preview. Retire it deliberately once Ellen has signed off, rather than letting it rot.
 
-### ⚠ Known gap: no IPv6
+### IPv6 — resolved 2026-08-27, ~21:00
 
-The legacy site had `AAAA → 2607:7700:0:e:0:2:fcc:9f77`. Cloudflare's scan missed it and it was
-**deliberately not recreated** — the reasoning being that with no AAAA published, IPv6 clients fall
-back to IPv4.
+**Droplet IPv6: `2604:a880:400:d1:0:4:e2a7:f001`.** AAAA records published for apex, `www` and
+`staging`. Verified end to end: all pages 200 over forced IPv6, `www` → apex redirect works, IPv4
+unaffected, and the address survives a `systemd-networkd` restart.
 
-That reasoning was incomplete. Resolvers that had already cached JetHost's AAAA kept sending IPv6
-visitors to the **old** site until that TTL expired — a temporary split where some people saw the old
-site and some the new. Not an outage (the old site still works), but avoidable.
+The gap existed because the droplet was created without IPv6 and Cloudflare's scan missed the legacy
+`AAAA → 2607:7700:0:e:0:2:fcc:9f77`, which was then deliberately not recreated. That reasoning was
+incomplete: resolvers holding JetHost's cached AAAA kept sending IPv6 visitors to the **old** site
+until it expired — a brief old/new split rather than an outage.
 
-**The droplet was created without IPv6 at all.** Restoring parity means enabling IPv6 on the droplet
-and publishing an AAAA pointing at it. Deferred from go-live night deliberately: the user impact was
-near zero, and network-layer changes to a freshly-live server are exactly the wrong thing to do at the
-end of a long session.
+**Enabling IPv6 on an existing DigitalOcean droplet is a two-part job.** The API action
+(`doctl compute droplet-action enable-ipv6`) only allocates the address and publishes it to the
+metadata service; **the OS does not pick it up.** Netplan needs the address and a default route added
+by hand:
+
+```yaml
+      addresses:
+      - "161.35.119.59/20"
+      - "2604:a880:400:d1:0:4:e2a7:f001/64"     # added
+      routes:
+      - to: "0.0.0.0/0"
+        via: "161.35.112.1"
+      - to: "::/0"                              # added
+        via: "2604:a880:400:d1::1"
+        on-link: true
+```
+
+`netplan apply` is safe here — it did not disturb IPv4 or drop SSH across two attempts.
+
+⚠ **Two things cost time and are worth not repeating.** The netplan file indents list items at
+**6 spaces**, and reading it through a `sed 's/^/  /'` pipe makes it look like 8 — a string-replace
+built on that misreading silently matches nothing. **Assert your anchors before writing.** And a
+"safety" dead-man switch that restores a backup after N seconds will happily undo a change you made
+correctly; it masked the real bug for a full round-trip.
 
 ### Target Cloudflare zone (built from the live zone, 2026-08-26)
 
@@ -415,8 +437,6 @@ of billing period, not immediately.** Prerequisite: her mail must be off JetHost
 **Move her mail off JetHost.** `ellen@ellenharvey.net` is a pure forward to `eharvey.net@gmail.com`
 (she confirmed that destination 2026-08-27). **Cloudflare Email Routing replaces it for $0.** Requires
 her to click a verification link Cloudflare sends to that Gmail. Blocks the JetHost cancellation above.
-
-**Restore IPv6** — enable it on the droplet and publish an AAAA. See the gap section above.
 
 **Fix the deploy remotes and Makefile.** `production` still points at the retired droplet and the
 Makefile's `STAGING_HOST` is the old box. Actively misleading.
