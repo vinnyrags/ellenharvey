@@ -318,6 +318,39 @@ Git remotes, **reorganised 2026-08-28** (the misleading `production` → old-dro
 | `production` | `root@161.35.119.59:/var/repo/ellenharvey-production.git` | `main` → **https://ellenharvey.net (LIVE)** |
 | `preview` | `root@174.138.70.29:/var/repo/ellenharvey.git` | the retired preview on Vincent's droplet — **no target deploys here** |
 
+### Preview retirement — phase 1 done 2026-08-28
+
+`ellenharvey.vincentragosta.io` now **301s to https://ellenharvey.net**, path preserved
+(`/photos/` → `/photos/`). Verified end to end: 200 at the far end, over both http and https.
+
+Redirected rather than deleted because **the preview URL was emailed to Ellen on 2026-08-13 and is
+still in her inbox.** A dead page at a link we sent her is a worse outcome than a redirect — she is
+the client whose previous developer left her unable to reach her own site.
+
+The new vhost has **no php handler, no root, no try_files** — everything 301s, so nothing under
+`/var/www/ellenharvey.vincentragosta.io` is reachable at all. `wp-config-env.php` is unserveable by
+construction rather than by a deny rule that has to be ordered correctly.
+
+**Still in place, deliberately:** the 444M docroot (57M uploads), the `ellenharvey` /
+`ellenharvey_user` database, and the `/var/repo/ellenharvey.git` bare repo. They are a warm copy of
+her site while her $6 droplet runs **with no backups**. Its value decays as she edits live content.
+
+**Phase 2 — full teardown, scheduled alongside the JetHost cancellation (before 2026-12-15):**
+
+1. Pull a final backup off the droplet — DB dump + uploads tarball
+2. Drop database `ellenharvey` and user `ellenharvey_user`
+3. Remove `/var/www/ellenharvey.vincentragosta.io` and `/var/repo/ellenharvey.git`
+4. `certbot delete --cert-name ellenharvey.vincentragosta.io`
+5. Remove the vhost + its `sites-enabled` symlink, `nginx -t`, reload
+6. **Remove the DNS A record LAST** — `ellenharvey` in the `vincentragosta.io` zone (DigitalOcean)
+7. Drop the `preview` git remote locally
+
+> ⚠️ **Order matters at step 6.** Delete the A record while certbot still holds the cert and the
+> next renewal fails on a name it cannot validate — which surfaces as noise across the whole
+> renewal run, not just this one cert. Cert first, DNS after.
+>
+> Rollback for phase 1: `/root/nginx-backups/20260828-031311/ellenharvey.vincentragosta.io.pre-retire`
+
 ### Branch → environment
 
 **`develop` → staging. `main` → production.** Matching vincentragosta.io. Use the Makefile:
