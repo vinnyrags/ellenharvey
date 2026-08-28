@@ -309,21 +309,35 @@ to it is a tracked follow-up. Deploys here still use the older per-site post-rec
 
 ## Deploy
 
-Git remotes, as of 2026-08-27:
+Git remotes, **reorganised 2026-08-28** (the misleading `production` → old-droplet mapping is gone):
 
 | Remote | Target | Effect |
 |---|---|---|
 | `origin` | GitHub | deploys nothing |
-| `staging-new` | `root@161.35.119.59:/var/repo/ellenharvey-staging.git` | → https://staging.ellenharvey.net |
-| `production-new` | `root@161.35.119.59:/var/repo/ellenharvey-production.git` | → **https://ellenharvey.net (LIVE)** |
-| `production` | `root@174.138.70.29:/var/repo/ellenharvey.git` | ⚠ the **old** droplet — misleading name, deploys to the retired preview |
+| `staging` | `root@161.35.119.59:/var/repo/ellenharvey-staging.git` | `develop` → https://staging.ellenharvey.net |
+| `production` | `root@161.35.119.59:/var/repo/ellenharvey-production.git` | `main` → **https://ellenharvey.net (LIVE)** |
+| `preview` | `root@174.138.70.29:/var/repo/ellenharvey.git` | the retired preview on Vincent's droplet — **no target deploys here** |
 
-⚠ **`production` is the wrong remote now.** It predates the migration and still points at the old
-box. Pushing to it deploys nothing anyone can see. **`production-new` is the live site.** Renaming
-these — and updating the `Makefile`, which still has `STAGING_HOST := root@174.138.70.29` — is a
-tracked follow-up.
+### Branch → environment
 
-Both hooks deploy `main`, run composer for root and child theme, `npm ci && npm run build` for IX
+**`develop` → staging. `main` → production.** Matching vincentragosta.io. Use the Makefile:
+
+```bash
+make deploy-staging      # refuses unless you are on develop
+make deploy-production   # merges develop → main --ff-only, then pushes
+```
+
+> ☠️ **The hooks are branch-gated, and a wrong-branch push fails silently.** Each hook skips any ref
+> that is not its branch (`[ "$branch" != "develop" ] && continue`). Push `main` to staging and the
+> ref moves, the hook prints "Branch main — skipping", and **nothing deploys** — with a perfectly
+> successful-looking `git push`. Both Makefile targets check the branch before pushing, and compare
+> the remote ref to the local SHA afterwards rather than printing an unearned ✓.
+
+The staging hook was changed from `main` to `develop` on 2026-08-28; before that both environments
+deployed `main`, which made a staging/production split impossible. Hook backups:
+`/root/hook-backups/` on the droplet.
+
+Both hooks run composer for root and child theme, `npm ci && npm run build` for IX
 and the child, flush caches, and chown. They need `/root/.composer-auth.json` and
 `/root/.config/composer/auth.json` for the ACF Pro and satis credentials — **both were copied to the
 new droplet**; without them composer silently drops the mythus mu-plugin.
@@ -331,8 +345,8 @@ new droplet**; without them composer silently drops the mythus mu-plugin.
 **Code and content deploy separately, and this is the thing to remember here:**
 
 ```bash
-git push production-new main   # code only
-make push-content              # database + uploads (Makefile still points at the OLD host)
+make deploy-production   # code only
+make push-content        # database + uploads → staging
 ```
 
 Content is the **database**, not git. A code deploy will not move a page, a gallery item, or an

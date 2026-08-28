@@ -17,19 +17,29 @@ UPLOADS_DIR := $(CURDIR)/wp-content/uploads
 # Hosted on the vincentragosta.io droplet. Code deploys via `git push
 # production main` (post-receive hook runs composer/npm/build). Content
 # (DB + uploads) is pushed separately — it lives in the DB, not in git.
-# No production env yet; DNS cutover of ellenharvey.net comes later.
+# Both environments live on Ellen's droplet (161.35.119.59), isolated by
+# database, Redis DB number and cache-key salt. develop -> staging, main -> production.
+#
+# The old preview at ellenharvey.vincentragosta.io still exists on Vincent's
+# droplet and is reachable as the `preview` git remote. It is NOT deployed to by
+# any target here; retire it once Ellen no longer references that link.
 
-STAGING_HOST := root@174.138.70.29
-STAGING_DIR  := /var/www/ellenharvey.vincentragosta.io
+STAGING_HOST := root@161.35.119.59
+STAGING_DIR  := /var/www/staging.ellenharvey.net
 STAGING_WP   := $(STAGING_DIR)/wp
-STAGING_URL  := https://ellenharvey.vincentragosta.io
+STAGING_URL  := https://staging.ellenharvey.net
+
+PRODUCTION_HOST := root@161.35.119.59
+PRODUCTION_DIR  := /var/www/ellenharvey.net
+PRODUCTION_WP   := $(PRODUCTION_DIR)/wp
+PRODUCTION_URL  := https://ellenharvey.net
 
 # ─── Phony targets ───────────────────────────────────────────────────────────
 
 .PHONY: help \
 	start stop \
 	install build watch clean autoload update wp \
-	deploy push-content pull-content ssh
+	deploy-staging deploy-production push-content pull-content ssh
 
 .DEFAULT_GOAL := help
 
@@ -115,17 +125,41 @@ wp: ## Run a WP-CLI command (use ARGS="...")
 	$(if $(ARGS),,$(error Usage: make wp ARGS="post-type list"))
 	ddev wp $(ARGS)
 
-##@ Deploy (staging)
+##@ Deploy
 
-deploy: ## Push code to GitHub + staging (origin, then production → build runs on server)
-	@if [ "$$(git rev-parse --abbrev-ref HEAD)" != "main" ]; then \
-		echo "✗ Refusing to deploy: not on 'main' (on '$$(git rev-parse --abbrev-ref HEAD)')."; exit 1; \
+# The server-side post-receive hooks are branch-gated: staging deploys ONLY
+# `develop`, production deploys ONLY `main`. Pushing the wrong branch moves the
+# ref and the hook skips it, so nothing appears to happen. That is why each
+# target checks the branch before pushing.
+#
+# Neither target prints a success banner it has not earned — both compare the
+# remote ref against the local SHA afterwards. An unconditional "✓ deployed"
+# is how a no-op push gets mistaken for a release.
+
+deploy-staging: ## Deploy develop → staging.ellenharvey.net
+	@if [ "$$(git rev-parse --abbrev-ref HEAD)" != "develop" ]; then \
+		echo "✗ Refusing to deploy: not on 'develop' (on '$$(git rev-parse --abbrev-ref HEAD)')."; exit 1; \
 	fi
+	@echo "→ Pushing develop to GitHub (origin)..."
+	git push origin develop
+	@echo "→ Pushing develop to staging (auto-builds on server)..."
+	git push staging develop
+	@REMOTE=$$(git ls-remote staging develop | cut -f1); LOCAL=$$(git rev-parse develop); \
+	if [ "$$REMOTE" = "$$LOCAL" ]; then echo "✓ staging is at $$LOCAL — verify at $(STAGING_URL)"; \
+	else echo "✗ MISMATCH — staging=$$REMOTE local=$$LOCAL"; exit 1; fi
+
+deploy-production: ## Merge develop → main and deploy to ellenharvey.net
+	@echo "→ Merging develop into main..."
+	git checkout main
+	git merge develop --ff-only
 	@echo "→ Pushing main to GitHub (origin)..."
 	git push origin main
-	@echo "→ Pushing main to staging (auto-builds on server)..."
+	@echo "→ Pushing main to production (auto-builds on server)..."
 	git push production main
-	@echo "✓ Code deployed — verify at $(STAGING_URL)"
+	git checkout develop
+	@REMOTE=$$(git ls-remote production main | cut -f1); LOCAL=$$(git rev-parse main); \
+	if [ "$$REMOTE" = "$$LOCAL" ]; then echo "✓ production is at $$LOCAL — verify at $(PRODUCTION_URL)"; \
+	else echo "✗ MISMATCH — production=$$REMOTE local=$$LOCAL"; exit 1; fi
 
 push-content: ## Push local DB + uploads to staging (overwrites staging content)
 	@echo "→ Exporting local database..."
