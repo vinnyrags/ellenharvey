@@ -7,9 +7,10 @@
 > `make push-content` ships the database and uploads. A missing page after a deploy is almost
 > always the wrong command, not a bug.
 
-Freelance client site for the artist Ellen Harvey. **There is no production environment yet** — the
-site runs on staging at https://ellenharvey.vincentragosta.io while hosting and DNS are moved off
-her existing JetHost account.
+Freelance client site for the artist Ellen Harvey. **Live at https://ellenharvey.net since
+2026-08-27**, on a DigitalOcean droplet in Ellen's own account (`161.35.119.59`). Staging and
+production are two vhosts on that single droplet. DNS is Cloudflare, also in her account. Her mail
+still runs through JetHost until Email Routing is set up — see [`RUNBOOK.md`](RUNBOOK.md).
 
 ## Stack
 
@@ -24,7 +25,11 @@ auto-load from `~/.claude/rules/mythus-ix.md`.
 
 - **Gallery items** are a custom post type ordered by `menu_order`. That ordering is database
   state — it does not survive a sync in the wrong direction.
-- Shares droplet `174.138.70.29` with `vincentragosta.io`, and is **not on deploy-kit** yet.
+- Runs on its **own droplet** (`161.35.119.59`) in Ellen's DigitalOcean account, hosting both staging
+  and production. Not on deploy-kit.
+- Her **domain is registered at Register.com / Network Solutions** — not JetHost, and not Cloudflare.
+  Cloudflare only serves DNS. The cutover was a nameserver change, never a registrar transfer.
+- ⚠ `git remote production` points at the **retired** droplet. **`production-new` is the live site.**
 
 ## Related
 

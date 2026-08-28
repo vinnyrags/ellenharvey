@@ -10,41 +10,89 @@ Operating this project: where it lives, how to deploy, what to purge, what bites
 
 ## Environments
 
+> **WENT LIVE 2026-08-27 20:24 EDT.** `ellenharvey.net` now serves the WordPress rebuild from a
+> DigitalOcean droplet in **Ellen's own account**. Everything below describes the current state; the
+> migration history is further down.
+
 | Env | Host | Docroot | Branch | URL |
 |---|---|---|---|---|
 | local | DDEV | repo root | `main` | https://ellenharvey.ddev.site |
-| staging | `root@174.138.70.29` | `/var/www/ellenharvey.vincentragosta.io` | `main` | https://ellenharvey.vincentragosta.io |
-| production | — | — | — | **does not exist yet** |
+| **staging** | `root@161.35.119.59` | `/var/www/staging.ellenharvey.net` | `main` | https://staging.ellenharvey.net |
+| **production** | `root@161.35.119.59` | `/var/www/ellenharvey.net` | `main` | https://ellenharvey.net |
+| *retired* | `root@174.138.70.29` | `/var/www/ellenharvey.vincentragosta.io` | — | old preview, still running |
 
-WP core sits in a **`/wp` subdirectory** (`$STAGING_DIR/wp`), so remote wp-cli needs `--path=wp`.
+WP core sits in a **`/wp` subdirectory**, so remote wp-cli needs `--path=<docroot>/wp`.
 
-**There is no production environment.** The site lives on staging under a subdomain of
-vincentragosta.io. Moving it to its own hosting and DNS — off Ellen's existing JetHost account — is
-the open engagement item.
-
-The destination is settled (2026-08-20): a **$6/mo DigitalOcean droplet, account in Ellen's own
-name, billed to her card directly** — we set it up, she owns it. DNS then points from JetHost to
-that droplet and JetHost lapses on its own in December. **Ellen greenlit the migration 2026-08-26**
-and gave `Shawgirlnyc@yahoo.com` as the account email; see the engagement doc for the signup flow.
-
-### DNS and mail facts (verified 2026-08-26)
+### The droplet
 
 | | |
 |---|---|
-| Registrar | **Register.com / Network Solutions** — *not* JetHost; already decoupled |
-| Domain expiry | **2027-09-30** — no near-term renewal deadline |
-| Nameservers | `ns1–4.jethostns.com` — **served by JetHost, dies in December** |
-| Live A record | `15.204.159.119` (JetHost) |
-| MX | `ellenharvey.net` → `15.204.159.119` — **her mail is on the JetHost box** |
+| Name / ID | `ellenharvey-prod-01` · `595736106` |
+| IP | **`161.35.119.59`** (IPv4 only — see the IPv6 gap below) |
+| Account | **Ellen's** — `shawgirlnyc@yahoo.com`, billed to her card |
+| Spec | Basic/Regular, 1 GB / 1 vCPU / 25 GB, nyc1, **$6/mo**, no backups |
+| Access | Vincent's `id_ed25519`, imported into her account as `vincent-macbook` |
+| Swap | 2 GB — a 1 GB box running two WordPress installs needs it |
 
-⚠ **The staging URL's DNS is not in this project.** `ellenharvey.vincentragosta.io` is an A record to
-`174.138.70.29` inside the **`vincentragosta.io` zone**, which currently lives on **DigitalOcean DNS**
-and is slated to move to Cloudflare as separate work. That record must survive the move — it is the
-preview link Ellen reviews — and it should stay unproxied: this vhost has its own Let's Encrypt cert
-and `blog_public=0`, both of which behave differently behind Cloudflare's proxy.
+**Both environments live on this one droplet**, isolated by database, Redis DB number and cache-key
+salt — the same pattern as vincentragosta.io:
 
-**Ellen's zone goes in a Cloudflare account of her own** (`Shawgirlnyc@yahoo.com`), *not* Vincent's
-existing account — see the engagement doc for why. The two are deliberately separate.
+| | staging | production |
+|---|---|---|
+| Database | `ellenharvey_stg` / `ellenharvey_stg` | `ellenharvey` / `ellenharvey_user` |
+| Redis DB | 1, salt `staging_ellenharvey_` | 0, salt `ellenharvey_` |
+| `blog_public` | **0** | **1** |
+| Bare repo | `/var/repo/ellenharvey-staging.git` | `/var/repo/ellenharvey-production.git` |
+
+Credentials are in each docroot's gitignored `wp-config-env.php`.
+
+### DNS — Cloudflare, in Ellen's account
+
+Nameservers moved from `dns1/dns2.amhosting.com` to Cloudflare on **2026-08-27**. Because the zone was
+built as an exact mirror of the live one first, **the nameserver change was invisible** — nothing
+resolved differently and the site never went down. Only afterwards did the apex A record move.
+
+| | |
+|---|---|
+| Registrar | **Register.com / Network Solutions** — unchanged, nameservers only |
+| Registrant email | `shawgirlnyc@yahoo.com` — already correct, nothing to change |
+| Domain expiry | **2027-09-30**, auto-renew on. No near-term deadline. |
+| Cloudflare account | **Ellen's** — `Shawgirlnyc@yahoo.com`, deliberately *not* Vincent's |
+| Zone ID | `2a13613368f151e21ef7e861481736ce` |
+| Nameservers | `alexis.ns.cloudflare.com`, `sasha.ns.cloudflare.com` |
+| DNSSEC | **off** — verified. Left enabled through an NS change is one of the few ways to take a domain fully offline. |
+
+**Every record is DNS-only (grey cloud), and that is deliberate.** `mail`, `smtp`, `webmail`, `pop3`
+and `ftp` *must* stay grey forever: Cloudflare's proxy only handles HTTP/HTTPS ports, so proxying them
+breaks those protocols outright. Proxying apex/`www` would also mean the origin IP is hidden, which
+changes certificate handling. Cloudflare will nag that the domain "is not fully protected" — ignore it.
+
+| Type | Name | Value |
+|---|---|---|
+| A | `@`, `www` | **`161.35.119.59`** — the droplet. TTL **60s** for fast cutover/revert. |
+| A | `staging` | `161.35.119.59` |
+| A | `mail`, `ftp`, `pop3`, `smtp`, `stats`, `webmail` | `15.204.159.119` — **still JetHost** |
+| MX | `@` | `10 mail.ellenharvey.net` |
+| TXT | `@` / `_dmarc` | SPF (JetHost) / `v=DMARC1; p=reject; aspf=s` |
+
+⚠ **The staging URL of the OLD preview is not in this project.** `ellenharvey.vincentragosta.io` is an
+A record inside the `vincentragosta.io` zone on DigitalOcean DNS. It still resolves and still serves
+the old preview. Retire it deliberately once Ellen has signed off, rather than letting it rot.
+
+### ⚠ Known gap: no IPv6
+
+The legacy site had `AAAA → 2607:7700:0:e:0:2:fcc:9f77`. Cloudflare's scan missed it and it was
+**deliberately not recreated** — the reasoning being that with no AAAA published, IPv6 clients fall
+back to IPv4.
+
+That reasoning was incomplete. Resolvers that had already cached JetHost's AAAA kept sending IPv6
+visitors to the **old** site until that TTL expired — a temporary split where some people saw the old
+site and some the new. Not an outage (the old site still works), but avoidable.
+
+**The droplet was created without IPv6 at all.** Restoring parity means enabling IPv6 on the droplet
+and publishing an AAAA pointing at it. Deferred from go-live night deliberately: the user impact was
+near zero, and network-layer changes to a freshly-live server are exactly the wrong thing to do at the
+end of a long session.
 
 ### Target Cloudflare zone (built from the live zone, 2026-08-26)
 
@@ -121,7 +169,37 @@ Reviews) has a counterpart. The only legacy gap is URLs, not content.
 | Addon domains | none — single domain |
 | Account NS / IP | `ns1,ns2.use2.jethosting.com` · `15.204.159.119` |
 
-### Cutover checklist
+### Go-live record — 2026-08-27
+
+Sequence actually executed, in order. Worth keeping because the ordering is what made it safe:
+
+1. Droplet created in **her** DO account via API; Vincent's SSH key imported
+2. Provisioned to match source — PHP 8.4, MariaDB 10.11, nginx 1.24, Redis 7, Node 20.20.2, 2 GB swap
+3. Staging built; code deployed **through the post-receive hook** rather than rsync, proving the pipeline
+4. Content migrated server-to-server (not via laptop); 339 URL replacements
+5. Cloudflare zone built as an **exact mirror** of the live zone, all records DNS-only
+6. MX repointed apex → `mail.ellenharvey.net` *before* anything moved — same server, but it frees the apex
+7. Nameservers moved at Register.com. **Invisible — nothing resolved differently, site never went down**
+8. Staging certificate via HTTP-01; **production certificate via DNS-01 using the Cloudflare API token,
+   issued before any traffic moved** — so there was never a window of certificate warnings
+9. Production built and verified end-to-end using `curl --resolve`, with live DNS still on JetHost
+10. Apex + `www` A records flipped. Live at **20:24 EDT**
+
+Verified after: all pages 200, 71 résumé rows, 0 stale URLs, legacy redirects 301, `www` → apex,
+hardening 403s, valid certificate, all four major public resolvers correct.
+
+**What went wrong, and it was worth catching:**
+
+- **cPanel's Zone Editor is not authoritative for this domain.** A test record added there appeared on
+  `ns1/ns2.use2.jethosting.com` but *not* on the delegated `jethostns.com` nameservers. Had we
+  attempted the original plan — flip the A record in cPanel — it would have silently done nothing on
+  a live site at midnight. Found for free because we tested with a throwaway `staging` record first.
+- **The IPv6 gap** (see above), which produced a brief old/new split for some visitors.
+- Repeated **local DNS-cache false alarms** — the operator's machine kept showing the old site while
+  every public resolver was correct. Verify from an independent vantage point (the droplet itself, or
+  `curl --resolve`) before believing a failure is real.
+
+### Cutover checklist *(completed 2026-08-27 — kept for reference)*
 
 **1. Legacy URL redirects — ✅ BUILT AND LIVE ON STAGING (2026-08-26).** The legacy site is 25 years of
 indexed `.htm` URLs, and all of them used to 404 on the rebuild. Every page has a counterpart, so this
@@ -206,27 +284,54 @@ to it is a tracked follow-up. Deploys here still use the older per-site post-rec
 
 ## Deploy
 
-Remote `production` → `root@174.138.70.29:/var/repo/ellenharvey.git` (the remote is named
-`production` even though it currently serves staging — a naming artifact worth knowing before you
-push). `origin` is GitHub and deploys nothing.
+Git remotes, as of 2026-08-27:
+
+| Remote | Target | Effect |
+|---|---|---|
+| `origin` | GitHub | deploys nothing |
+| `staging-new` | `root@161.35.119.59:/var/repo/ellenharvey-staging.git` | → https://staging.ellenharvey.net |
+| `production-new` | `root@161.35.119.59:/var/repo/ellenharvey-production.git` | → **https://ellenharvey.net (LIVE)** |
+| `production` | `root@174.138.70.29:/var/repo/ellenharvey.git` | ⚠ the **old** droplet — misleading name, deploys to the retired preview |
+
+⚠ **`production` is the wrong remote now.** It predates the migration and still points at the old
+box. Pushing to it deploys nothing anyone can see. **`production-new` is the live site.** Renaming
+these — and updating the `Makefile`, which still has `STAGING_HOST := root@174.138.70.29` — is a
+tracked follow-up.
+
+Both hooks deploy `main`, run composer for root and child theme, `npm ci && npm run build` for IX
+and the child, flush caches, and chown. They need `/root/.composer-auth.json` and
+`/root/.config/composer/auth.json` for the ACF Pro and satis credentials — **both were copied to the
+new droplet**; without them composer silently drops the mythus mu-plugin.
 
 **Code and content deploy separately, and this is the thing to remember here:**
 
 ```bash
-make deploy        # code only — git push to the droplet
-make push-content  # database + uploads
+git push production-new main   # code only
+make push-content              # database + uploads (Makefile still points at the OLD host)
 ```
 
 Content is the **database**, not git. A code deploy will not move a page, a gallery item, or an
 image. If a change looks missing after a deploy, check which of the two you actually ran.
+
+## Emergency revert
+
+**`.assets-inbox/REVERT-GOLIVE.sh`** — points `ellenharvey.net` and `www` back at JetHost
+(`15.204.159.119`) via the Cloudflare API. TTL is 60s, so it takes effect in about a minute.
+
+This works **only while the original site is still on JetHost**, which is true until cancellation
+(target mid-November). After that there is nothing to revert to — the archive in
+`.assets-inbox/legacy-site-archive/` is a static copy, not a running site.
+
+Nothing else needs reverting: the nameserver move is invisible either way, and mail never moved.
 
 ## Content vs code
 
 - **Gallery items** are a custom post type ordered by `menu_order` — the ordering is DB state and
   is wiped by a DB sync in the wrong direction.
 - **Uploads** are gitignored; `make push-content` carries them.
-- Because there's no production yet, the sync only runs local → staging. Be careful once a real
-  production environment exists — the direction guard matters more then.
+- **There are now two environments on one droplet.** The direction guard matters: a careless sync can
+  overwrite production with staging content, or push `blog_public=0` onto the live site and
+  quietly de-index it.
 
 ## Caches
 
@@ -234,15 +339,53 @@ Redis object cache on the droplet; `wp cache flush` clears it. This site is reco
 **page-uncached** (no nginx FastCGI micro-cache, unlike the ARTHOUSE droplets) — worth re-verifying
 before assuming a stale page is a cache problem.
 
+## Security posture
+
+Applied to the new droplet 2026-08-27, at parity with the rest of the fleet. **It was missing at
+first** — the vhosts were written from scratch and omitted the hardening include, so the site was
+briefly exposed to all three of the incidents that snippet exists to prevent.
+
+- **`snippets/wp-hardening.conf`** included at the top of *both* server blocks. Blocks
+  `/xmlrpc.php` **and** `/wp/xmlrpc.php` (the Bedrock-layout path that was open fleet-wide), PHP
+  execution anywhere under `uploads/` (the Shucked incident, 2026-08-25), and `/scripts/` (the CBA
+  credential leak, 2026-08-24). All three verified returning 403 by live probe, including writing a
+  real PHP file into `uploads/` and confirming it would not execute.
+- **`conf.d/wp-security.conf`** — defines the `wp_login` rate-limit zone the snippet references.
+  Without it nginx fails config-test, so it must be copied alongside.
+- **`conf.d/00-cloudflare-realip.conf`** — copied for parity. Inert while records are DNS-only.
+- **`fail2ban`** active with the sshd jail.
+- **UFW** allowing only OpenSSH and Nginx Full.
+
+### Staging is noindexed in four layers
+
+`blog_public=0` alone is **not sufficient**, and this is worth internalising fleet-wide:
+
+> **Modern WordPress ignores `blog_public` when generating `robots.txt`.** Read `do_robots()` in
+> `wp-includes/functions.php` — it reads the option into `$public` and then never branches on it. A
+> private site serves the same permissive robots.txt as a public one.
+
+So staging carries: `blog_public=0`, the `noindex, nofollow` meta tag, an `X-Robots-Tag` header at
+server level **and repeated inside the static-asset location** (a `location` with its own
+`add_header` discards every inherited one), plus a hard-coded `Disallow: /` returned by nginx.
+
+**Production has none of this, deliberately** — `blog_public=1`, no noindex, and robots.txt
+advertising her sitemap. Never copy staging's suppression onto the live site.
+
 ## Traps
 
 1. **WP salts moved out of VCS 2026-08-13.** Real salts live in the gitignored `wp-config-env.php`;
    the tracked `wp-config.php` carries guarded placeholders and **must require the env file above
    the salt block** (PHP is first-wins). Verify by proving the env value won, not that the
    placeholder is gone.
-2. **This box cannot send email.** No MTA, no SMTP plugin — `wp_mail()` fails silently. Relevant
-   here: a contact form that appears to work will deliver nothing, and you cannot hand Ellen a
-   WordPress password-reset link.
+2. **Neither box can send email.** No MTA, no SMTP plugin — `wp_mail()` fails silently. A contact
+   form that appears to work delivers nothing, and **you cannot hand Ellen a password-reset link** —
+   her existing password is the only copy, and resets go through `wp user update` over wp-cli.
+   Her Contact page uses a `mailto:` link rather than a form, so there is no visitor-facing
+   dependency today.
+   **This is fleet-wide and is a tracked follow-up** — an SMTP relay (Resend/Postmark free tier)
+   would fix it everywhere and remove the "only Vincent can reset her password" dependency.
+   *Note this is entirely separate from her actual email*, which is governed by the MX record and
+   never touched by the website.
 3. **Root `composer update` without local ACF auth wipes the mythus mu-plugin.** Update the child
    vendor instead.
 4. **`composer update vincentragosta/ix` wipes `ix/node_modules`** — run `npm install` inside the
@@ -257,6 +400,42 @@ before assuming a stale page is a cache problem.
    credits that were on neither the old site nor in her email body.
    Post revisions in the DB are the other recovery path: `wp post list --post_type=revision
    --post_parent=<id> --post_status=any`.
+
+## Follow-ups
+
+Ordered by deadline, not size. Nothing here is urgent tonight; all of it was deliberately deferred
+from go-live rather than forgotten.
+
+**⏰ Cancel JetHost — target mid-November 2026.** Vincent committed to this in writing, so if it slips
+Ellen loses **$96** on her own card and it's his miss. December 15 is the *due* date, not necessarily
+the *charge* date — WHMCS often generates invoices 7–30 days ahead and captures then. **Cancel at end
+of billing period, not immediately.** Prerequisite: her mail must be off JetHost first, since the
+`mail` A record is what keeps `ellen@ellenharvey.net` alive.
+
+**Move her mail off JetHost.** `ellen@ellenharvey.net` is a pure forward to `eharvey.net@gmail.com`
+(she confirmed that destination 2026-08-27). **Cloudflare Email Routing replaces it for $0.** Requires
+her to click a verification link Cloudflare sends to that Gmail. Blocks the JetHost cancellation above.
+
+**Restore IPv6** — enable it on the droplet and publish an AAAA. See the gap section above.
+
+**Fix the deploy remotes and Makefile.** `production` still points at the retired droplet and the
+Makefile's `STAGING_HOST` is the old box. Actively misleading.
+
+**Retire `ellenharvey.vincentragosta.io`** once Ellen has signed off on the live site.
+
+### Fleet-wide, found during this migration
+
+**🚨 `staging.itzenzo.tv` is publicly indexable.** No `X-Robots-Tag`, no robots meta, no robots.txt,
+returns 200. A staging copy of the storefront is crawlable — duplicate content against `itzenzo.tv`
+plus whatever test data it holds. One-line nginx fix. Written up in `vincentragosta.io/RUNBOOK.md`.
+
+**`staging.vincentragosta.io` robots.txt** serves an HTML 404 — the same bare `location = /robots.txt`
+bug. Cosmetic, since its header does the real work, but fix it when nearby.
+
+**`wp_mail()` is broken fleet-wide.** No MTA on any droplet, so every site fails silently on password
+resets, admin notices, and contact forms. An SMTP relay on a free tier fixes it everywhere. This is
+the same finding as `droplet-no-outbound-mail`, now with a concrete client-facing consequence: Ellen
+cannot recover her own password without Vincent.
 
 ## See also
 
