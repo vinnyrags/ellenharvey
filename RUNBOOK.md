@@ -316,7 +316,8 @@ Git remotes, **reorganised 2026-08-28** (the misleading `production` → old-dro
 | `origin` | GitHub | deploys nothing |
 | `staging` | `root@161.35.119.59:/var/repo/ellenharvey-staging.git` | `develop` → https://staging.ellenharvey.net |
 | `production` | `root@161.35.119.59:/var/repo/ellenharvey-production.git` | `main` → **https://ellenharvey.net (LIVE)** |
-| `preview` | `root@174.138.70.29:/var/repo/ellenharvey.git` | the retired preview on Vincent's droplet — **no target deploys here** |
+
+*(The `preview` remote was removed 2026-08-28 — its bare repo no longer exists.)*
 
 ### Preview retirement — phase 1 done 2026-08-28
 
@@ -335,7 +336,8 @@ construction rather than by a deny rule that has to be ordered correctly.
 `ellenharvey_user` database, and the `/var/repo/ellenharvey.git` bare repo. They are a warm copy of
 her site while her $6 droplet runs **with no backups**. Its value decays as she edits live content.
 
-**Phase 2 — full teardown, scheduled alongside the JetHost cancellation (before 2026-12-15):**
+**Phase 2 — DONE 2026-08-28.** Executed early: staging.ellenharvey.net is the content copy, and a
+verified backup was pulled locally first. Original plan and ordering kept below for the record.
 
 1. Pull a final backup off the droplet — DB dump + uploads tarball
 2. Drop database `ellenharvey` and user `ellenharvey_user`
@@ -350,6 +352,35 @@ her site while her $6 droplet runs **with no backups**. Its value decays as she 
 > renewal run, not just this one cert. Cert first, DNS after.
 >
 > Rollback for phase 1: `/root/nginx-backups/20260828-031311/ellenharvey.vincentragosta.io.pre-retire`
+
+#### What phase 2 actually removed — 2026-08-28
+
+Gone: the 444M docroot, the `ellenharvey` schema on **Vincent's** droplet, `/var/repo/ellenharvey.git`,
+and the now-unreferenced `snippets/ellenharvey-legacy-redirects.conf`.
+
+**Kept deliberately: the redirect.** vhost, cert (renews to Oct 24 and beyond) and the DNS A record
+all remain, because the preview URL is still in Ellen's inbox from 2026-08-13. Steps 4–6 of the
+original plan — `certbot delete`, vhost removal, DNS removal — were **not** run and should not be
+until that link is certain to be dead.
+
+Backup taken first and verified before anything was destroyed:
+`~/Projects/vinnyrags/_archived/ellenharvey-preview-2026-08-28/` — `eh-preview.sql.gz` (176K, 12
+tables, matched against the live schema list) and `eh-preview-uploads.tar.gz` (54M, 322 files).
+
+> ⚠️ **The drop was guarded on hostname, and that guard is not optional.** Her LIVE database on
+> `161.35.119.59` is also called `ellenharvey`. The same `DROP DATABASE ellenharvey` run against the
+> wrong droplet destroys her production site. Any future script touching these must assert
+> `hostname` before it acts.
+
+**Two things this surfaced, both still open:**
+
+- **MySQL root is unreachable on `174.138.70.29`.** No passwordless socket auth, no working
+  `/root/.my.cnf`, and `/etc/mysql/debian.cnf` is the obsolete stub with no password. The schema was
+  dropped using the *site's own* `ellenharvey_user`, which held `ALL PRIVILEGES` on it. Administering
+  MySQL on this box currently requires a password nobody has written down.
+- **`ellenharvey_user`@`localhost` is orphaned** — still exists, holding grants on a schema that no
+  longer does. Harmless (`USAGE` on `*.*` is connect-and-nothing-else) but untidy, and it cannot be
+  dropped until the above is resolved.
 
 ### Branch → environment
 
