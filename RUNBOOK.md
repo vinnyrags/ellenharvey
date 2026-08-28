@@ -28,7 +28,7 @@ WP core sits in a **`/wp` subdirectory**, so remote wp-cli needs `--path=<docroo
 | | |
 |---|---|
 | Name / ID | `ellenharvey-prod-01` · `595736106` |
-| IP | **`161.35.119.59`** (IPv4 only — see the IPv6 gap below) |
+| IP | **`161.35.119.59`** · IPv6 **`2604:a880:400:d1:0:4:e2a7:f001`** |
 | Account | **Ellen's** — `shawgirlnyc@yahoo.com`, billed to her card |
 | Spec | Basic/Regular, 1 GB / 1 vCPU / 25 GB, nyc1, **$6/mo**, no backups |
 | Access | Vincent's `id_ed25519`, imported into her account as `vincent-macbook` |
@@ -116,9 +116,12 @@ built on that misreading silently matches nothing. **Assert your anchors before 
 "safety" dead-man switch that restores a backup after N seconds will happily undo a change you made
 correctly; it masked the real bug for a full round-trip.
 
-### Target Cloudflare zone (built from the live zone, 2026-08-26)
+### Target Cloudflare zone *(historical — this was the plan, executed 2026-08-27)*
 
-The live zone as it stands, and what each record becomes. `mail`/`ftp`/`webmail`/`smtp` are cPanel
+> Superseded by the live DNS table above. Kept because the reasoning — especially the MX trap — is
+> the most important thing anyone touching this domain needs to understand.
+
+The live zone as it stood pre-migration, and what each record became. `mail`/`ftp`/`webmail`/`smtp` are cPanel
 defaults that exist only to serve JetHost — they go away with it and must **not** be recreated.
 
 | Type | Name | Live value | After |
