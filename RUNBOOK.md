@@ -446,7 +446,46 @@ Makefile's `STAGING_HOST` is the old box. Actively misleading.
 
 **Retire `ellenharvey.vincentragosta.io`** once Ellen has signed off on the live site.
 
+**Consider proxying through Cloudflare (orange cloud).** Not done, and not urgent — but worth a
+deliberate decision later. Free tier gives DDoS protection, a WAF, and edge caching, and caching in
+particular is worth something on a 1 GB box. The real-IP config (`conf.d/00-cloudflare-realip.conf`)
+is already installed, so logs and fail2ban would still see genuine client IPs.
+
+Three things must be right before flipping any record orange:
+
+1. **`mail`, `smtp`, `webmail`, `pop3`, `ftp` stay grey forever.** Cloudflare's proxy only handles
+   HTTP/HTTPS ports — proxying them breaks those protocols outright.
+2. **SSL mode must be Full (strict).** New zones often default to Flexible, which either loops or
+   leaves the Cloudflare→origin leg unencrypted. The origin has a valid Let's Encrypt cert, so strict
+   works.
+3. **Certificate renewal is unaffected** — production uses DNS-01 via the Cloudflare API token, which
+   doesn't care about proxy state. (Staging uses HTTP-01 and would need watching.)
+
+Note the fleet does **not** proxy: `arthousenewyork.com`, `aviewfromthebridgebroadway.com`,
+`celebrityautobiography.com` and `shucked.com` are all DNS-only. Ellen is not an outlier here.
+
 ### Fleet-wide, found during this migration
+
+**🔓 nginx location ordering leaves `wp-config-env.php` unprotected on four vhosts.** The
+`location ~ wp-config-env\.php { deny all; }` rule sits *after* the generic `location ~ \.php$`.
+nginx matches regex locations in order and the first wins, so the file is handed to PHP-FPM and the
+deny rule is dead config. **Fixed on Ellen's two vhosts 2026-08-27; still present on the old droplet:**
+
+```
+ellenharvey.vincentragosta.io   php=19, deny=28
+staging.vincentragosta.io       php=22, deny=31
+vincentragosta.dev              php=16, deny=25
+vincentragosta.io               php=18, deny=28   ← production
+```
+
+**Nothing is leaking today** — PHP executes the file and it emits no output, so the DB password and
+salts stay put. It is a latent exposure: the protection is not actually in force, and it becomes a
+real disclosure if PHP-FPM is down or the handler changes. Precisely how the Shucked uploads issue
+went from theoretical to a 200.
+
+Fix is mechanical: move that one line above the PHP block, `nginx -t`, reload. **The ARTHOUSE droplets
+have not been swept and probably share it.** This is the same lesson already written into
+`wp-hardening.conf` for xmlrpc — the comment exists because the fleet learned it once already.
 
 **🚨 `staging.itzenzo.tv` is publicly indexable.** No `X-Robots-Tag`, no robots meta, no robots.txt,
 returns 200. A staging copy of the storefront is crawlable — duplicate content against `itzenzo.tv`
