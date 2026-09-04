@@ -442,6 +442,83 @@ Redis object cache on the droplet; `wp cache flush` clears it. This site is reco
 **page-uncached** (no nginx FastCGI micro-cache, unlike the ARTHOUSE droplets) — worth re-verifying
 before assuming a stale page is a cache problem.
 
+## Outbound mail — Resend via msmtp (staging proven 2026-09-03)
+
+Before this, the droplet had **no MTA at all** — no msmtp, no sendmail binary — while
+`sendmail_path` pointed at `/usr/sbin/sendmail`. Every `wp_mail()` failed silently: password
+resets, admin notices, everything. Same condition as the four ARTHOUSE boxes.
+
+| | |
+|---|---|
+| Relay | `smtp.resend.com` **port 2587** (not 587 — see below) |
+| Config | `/etc/msmtprc`, **`640 root:www-data`** — load-bearing, see below |
+| Key | `/root/.resend_key`, `600`, sending-scoped |
+| Tooling | `/opt/deploy-kit/provision/mail.sh` (cloned 2026-09-03) |
+| Resend account | **Ellen's own**, created 2026-09-02. Not Vincent's. |
+| Verified domains | `staging.ellenharvey.net` ✅ · `ellenharvey.net` — Phase 2 |
+
+**DNS added for staging** (all DNS-only; TXT/MX cannot be proxied anyway):
+
+| Type | Name | Value |
+|---|---|---|
+| TXT | `resend._domainkey.staging` | DKIM public key, 218 chars |
+| MX | `send.staging` | `feedback-smtp.us-east-1.amazonses.com` pri 10 |
+| TXT | `send.staging` | `v=spf1 include:amazonses.com ~all` |
+
+**Root SPF and root MX are untouched and must stay that way.** Her real mailbox is still JetHost
+(`MX 10 mail.ellenharvey.net`, `include:spf.guardedhost.com`). Resend puts its SPF on the `send.`
+subdomain, so there is never a reason to add a second SPF at the apex — two would be a `PermError`
+that breaks *all* her mail, inbound replies included.
+
+### ☠️ DigitalOcean blocks outbound SMTP on this droplet
+
+**25, 465 and 587 are all blocked; 2587 is open.** Symptom is a hang, then in `/var/log/msmtp.log`:
+
+```
+errormsg='cannot connect to smtp.resend.com, port 587: Connection timed out' exitcode=EX_TEMPFAIL
+```
+
+Nothing is wrong with the config or the key — the packets never leave. This is **per-account**:
+`174.138.70.29` sends fine on 587. DO will lift the block via a support ticket; 2587 is the faster
+route and is what this droplet uses.
+
+> `mail.sh --provider resend` used to **silently override an explicit `--port`**, because the
+> provider `case` runs after argument parsing. Fixed in deploy-kit 2026-09-03. On an older checkout,
+> pass `--host smtp.resend.com --port 2587 --user resend` instead of `--provider`.
+
+### Verifying — the only way that means anything
+
+`/etc/msmtprc` must be **`640 root:www-data`**. PHP-FPM runs as `www-data`; a root-only `600` file
+means every *web-initiated* send fails while every root `wp-cli` send succeeds. That exact bug hid on
+`vincentragosta.io` from 2026-05-11 to 2026-08-28.
+
+**So never verify with `wp eval` over SSH** — that is the one context that works while the site is
+broken. Use `mail.sh --test-to`, which sends as `www-data`, or drive the real web form.
+
+A `250` from the relay only proves acceptance. Read the *delivered* headers:
+
+```
+dkim=pass  header.i=@staging.ellenharvey.net header.s=resend
+dmarc=pass (p=REJECT sp=REJECT dis=NONE)
+```
+
+**Her DMARC is `p=reject` with `aspf=s`**, and there is no `sp=`, so subdomains inherit reject.
+Strict alignment means the envelope (`send.staging.ellenharvey.net`) never matches the From domain,
+so **SPF never aligns and DMARC rests entirely on DKIM**. One leg. A broken or rotated DKIM record
+means mail is *rejected*, not spam-foldered.
+
+### ⚠ Open: forwarded recipients may not receive
+
+2026-09-03: a real password reset to `hello@vincentragosta.io` (an improvmx forwarding alias) was
+accepted by Resend with a `250` but **never arrived**, while the same relay delivered fine direct to
+Gmail with `dmarc=pass`. Forwarding breaks SPF by design, so DKIM must survive the forwarder intact
+or DMARC fails — and under `p=reject` the message is discarded silently.
+
+**This matters for Ellen specifically:** `ellen@ellenharvey.net` is itself a JetHost forward to
+`eharvey.net@gmail.com`. If forwarding breaks DMARC here, *her own password reset disappears*, which
+is the exact capability this work exists to provide. **Unresolved — confirm against Resend's
+delivery log before declaring production done.**
+
 ## Security posture
 
 Applied to the new droplet 2026-08-27, at parity with the rest of the fleet. **It was missing at
