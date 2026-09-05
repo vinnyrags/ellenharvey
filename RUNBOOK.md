@@ -442,11 +442,15 @@ Redis object cache on the droplet; `wp cache flush` clears it. This site is reco
 **page-uncached** (no nginx FastCGI micro-cache, unlike the ARTHOUSE droplets) — worth re-verifying
 before assuming a stale page is a cache problem.
 
-## Outbound mail — Resend via msmtp (staging proven 2026-09-03)
+## Outbound mail — Resend via msmtp (production working 2026-09-04)
 
 Before this, the droplet had **no MTA at all** — no msmtp, no sendmail binary — while
 `sendmail_path` pointed at `/usr/sbin/sendmail`. Every `wp_mail()` failed silently: password
 resets, admin notices, everything. Same condition as the four ARTHOUSE boxes.
+
+**Proven end to end on production 2026-09-04:** a real password reset triggered from
+`ellenharvey.net/wp/wp-login.php`, relayed as `www-data`, forwarded through improvmx, inboxed with
+`dkim=pass header.i=@ellenharvey.net` and `dmarc=pass (p=REJECT sp=REJECT)`.
 
 | | |
 |---|---|
@@ -455,7 +459,9 @@ resets, admin notices, everything. Same condition as the four ARTHOUSE boxes.
 | Key | `/root/.resend_key`, `600`, sending-scoped |
 | Tooling | `/opt/deploy-kit/provision/mail.sh` (cloned 2026-09-03) |
 | Resend account | **Ellen's own**, created 2026-09-02. Not Vincent's. |
-| Verified domains | `staging.ellenharvey.net` ✅ · `ellenharvey.net` — Phase 2 |
+| Verified domains | `staging.ellenharvey.net` ✅ · `ellenharvey.net` ✅ — both live 2026-09-04 |
+| Sending identity | `noreply@ellenharvey.net` (envelope) · WordPress sends as `wordpress@ellenharvey.net` |
+| API key | `ellenharvey-droplet-all`, **All domains** — a domain-scoped key breaks the other site |
 
 **DNS added for staging** (all DNS-only; TXT/MX cannot be proxied anyway):
 
@@ -507,17 +513,69 @@ Strict alignment means the envelope (`send.staging.ellenharvey.net`) never match
 so **SPF never aligns and DMARC rests entirely on DKIM**. One leg. A broken or rotated DKIM record
 means mail is *rejected*, not spam-foldered.
 
-### ⚠ Open: forwarded recipients may not receive
+### ☠️ `mail.sh` copies the key INTO msmtprc — replacing the key file does nothing
 
-2026-09-03: a real password reset to `hello@vincentragosta.io` (an improvmx forwarding alias) was
-accepted by Resend with a `250` but **never arrived**, while the same relay delivered fine direct to
-Gmail with `dmarc=pass`. Forwarding breaks SPF by design, so DKIM must survive the forwarder intact
-or DMARC fails — and under `p=reject` the message is discarded silently.
+**This cost about six hours and produced a wrong bug report to Resend.** Read it before touching the
+key.
 
-**This matters for Ellen specifically:** `ellen@ellenharvey.net` is itself a JetHost forward to
-`eharvey.net@gmail.com`. If forwarding breaks DMARC here, *her own password reset disappears*, which
-is the exact capability this work exists to provide. **Unresolved — confirm against Resend's
-delivery log before declaring production done.**
+`mail.sh` writes the API key **into `/etc/msmtprc` as a literal**. It does not read `--key-file` at
+send time. So:
+
+```
+# WRONG — msmtp keeps using the old key, silently
+printf '%s' "$NEW_KEY" > /root/.resend_key
+
+# RIGHT — re-run mail.sh so it writes the new key into the config
+bash /opt/deploy-kit/provision/mail.sh --host smtp.resend.com --port 2587 \
+     --user resend --key-file /root/.resend_key --from noreply@ellenharvey.net
+```
+
+**What it looked like when we got this wrong (2026-09-03/04).** The key file was swapped from a
+`staging.ellenharvey.net`-scoped key to an All-domains key, but `mail.sh` was never re-run. Every
+symptom then pointed convincingly at a Resend bug:
+
+| Path | Key actually used | Result |
+|---|---|---|
+| SMTP → `ellenharvey.net` | old, staging-scoped | `550` refused — **correct** |
+| SMTP → `staging.ellenharvey.net` | old, staging-scoped | `250` — correct |
+| HTTP API → `ellenharvey.net` | new, All-domains (read from the file) | `200` — correct |
+
+That reads as "their SMTP gateway contradicts their own API," and a support ticket was filed on that
+basis. It was wrong: two different credentials, not one inconsistent service. Resend's `403` was
+right every time.
+
+**How it was actually found:** `GET /api-keys` (needs a temporary full-access key) reports
+`last_used_at` per key. **Two different keys showed the same second** while only two commands had
+been run — which is impossible unless SMTP and the API were using different credentials. Then:
+
+```bash
+# the check that settles it in one line
+[ "$(grep -E '^password' /etc/msmtprc | awk '{print $2}')" = "$(cat /root/.resend_key)" ] \
+  && echo match || echo "MISMATCH — msmtprc holds a different key"
+```
+
+**Verify the key in `msmtprc`, not the key in the file.** The file is an input to `mail.sh`, not a
+live reference.
+
+### Forwarded recipients — RESOLVED, they do receive
+
+2026-09-04: a real password reset from the production login form reached `hello@vincentragosta.io`
+(an improvmx forwarding alias) and inboxed with **DKIM intact through the forward**:
+
+```
+dkim=pass  header.i=@ellenharvey.net header.s=resend
+dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=ellenharvey.net
+arc=pass   (spf=pass dkim=pass dkdomain=ellenharvey.net dmarc=pass)
+```
+
+Forwarding breaks SPF by design, so this only works because the forwarder relays the message
+unmodified and the DKIM signature survives. improvmx does. **`ellen@ellenharvey.net` is a JetHost
+forward to `eharvey.net@gmail.com` and should behave the same way, but that specific path has not
+been tested** — worth one real reset to her address before telling her it works.
+
+An earlier reset to the same alias (2026-09-03, from the *staging* domain) was accepted with a `250`
+and never arrived. Not chased once production worked; if it recurs, note that a `250` from the relay
+is acceptance, never delivery.
 
 ## Security posture
 
