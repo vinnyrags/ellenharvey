@@ -45,3 +45,7 @@ wp-content/debug.log
 .assets-inbox/*
 !.assets-inbox/db-backups/
 !.assets-inbox/*.html
+
+# Project docs live in xipe (~/.claude/project-docs/ellenharvey/), symlinked here.
+/CLAUDE.md
+/RUNBOOK.md
