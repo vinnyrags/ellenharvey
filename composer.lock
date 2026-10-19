@@ -1026,17 +1026,17 @@
         },
         {
             "name": "vincentragosta/ix",
-            "version": "v1.10.0",
+            "version": "v1.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vinnyrags/IX.git",
-                "reference": "e4e7d90370b5c537a4df81f83f202f82403fe5fb"
+                "reference": "c2c60b6c34eed76fe7fb1cd39162dfd9252db5ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packages.vincentragosta.io/dist/vincentragosta/ix/vincentragosta-ix-e4e7d90370b5c537a4df81f83f202f82403fe5fb-zip-87e60b.zip",
-                "reference": "e4e7d90370b5c537a4df81f83f202f82403fe5fb",
-                "shasum": "23c5f7021e0fb82c2571c8e4f6d4ee1a5eaedb51"
+                "url": "https://packages.vincentragosta.io/dist/vincentragosta/ix/vincentragosta-ix-c2c60b6c34eed76fe7fb1cd39162dfd9252db5ef-zip-7fed11.zip",
+                "reference": "c2c60b6c34eed76fe7fb1cd39162dfd9252db5ef",
+                "shasum": "19e26b7bab03e756048d9b52c467c4a2af980c9e"
             },
             "require": {
                 "enshrined/svg-sanitize": "^1.0",
@@ -1073,10 +1073,10 @@
             ],
             "description": "A foundational WordPress parent theme with Timber support",
             "support": {
-                "source": "https://github.com/vinnyrags/IX/tree/v1.10.0",
+                "source": "https://github.com/vinnyrags/IX/tree/v1.10.1",
                 "issues": "https://github.com/vinnyrags/IX/issues"
             },
-            "time": "2026-10-19T02:31:51+00:00"
+            "time": "2026-10-19T02:37:51+00:00"
         },
         {
             "name": "vincentragosta/mythus",
